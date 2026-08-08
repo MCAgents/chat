@@ -7,11 +7,14 @@ It does not talk to any vendor itself. [`MCAgents/core`](https://github.com/MCAg
 owns that; this repository owns the experience around it — configuration,
 credential storage, commands, permissions, and conversation state.
 
-The repository is at the setup stage: it currently contains the agent instruction
-set and the documentation structure, and no source code yet.
+The repository is at the scaffold stage: the Gradle build and every module exist,
+but they carry no feature code yet.
 
 ## What is here today
 
+- A Gradle multi project build on **Java 25**: `api`, `common`, and eight
+  `platforms/*` modules, all under `io.github.mcagents.chat`. See
+  [`wiki/information/modules.md`](wiki/information/modules.md).
 - An agent instruction set under `.agents/` — placement rules, git conventions,
   task workflow, token handling, licensing, platform knowledge, and the creator
   agents that maintain the trees.
@@ -24,9 +27,12 @@ set and the documentation structure, and no source code yet.
 ```sh
 git clone https://github.com/MCAgents/chat.git
 cd chat
+./gradlew build
 ```
 
-Only git is required — there is nothing to build or install yet. Full details:
+The wrapper downloads Gradle and a Java 25 toolchain on the first run. You do not
+need a copy of `MCAgents/core` to build — it is reached through a reflective
+bridge at runtime, not compiled against. Full details:
 [`wiki/environments/setup.md`](wiki/environments/setup.md).
 
 ## Documentation
@@ -35,6 +41,8 @@ Start at [`wiki/INDEX.md`](wiki/INDEX.md).
 
 - [`wiki/information/overview.md`](wiki/information/overview.md) — what this
   repository is and how it is organized.
+- [`wiki/information/modules.md`](wiki/information/modules.md) — the module
+  graph, why core is not a build dependency, and the published artifacts.
 - [`wiki/information/licensing.md`](wiki/information/licensing.md) — who is
   allowed to use the software, and under which terms.
 - [`wiki/environments/setup.md`](wiki/environments/setup.md) — getting a working

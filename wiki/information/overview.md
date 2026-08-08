@@ -12,10 +12,16 @@ commands, permissions, and the conversation state the chat experience needs.
 That division is deliberate. A vendor's wire format changes in one repository, and
 every MCAgents project picks up the fix.
 
+`chat` does not compile against `core` either. It reaches the loaded core plugin
+through a **reflective bridge** at runtime, so this project builds on its own and
+survives a core release it was never compiled against — see
+[`modules.md`](modules.md).
+
 ## Current state
 
-The repository is at the setup stage. It contains **no source code yet**. What
-exists today is:
+The repository holds a Gradle multi project build with no feature code in it yet
+— every module exists, compiles, and produces a jar, but carries only its
+`package-info.java`. What exists today is:
 
 | Path | What it is |
 |---|---|
@@ -23,13 +29,14 @@ exists today is:
 | `AGENTS.md` | Entry point for agents: reading order, routing, standing conventions. |
 | `INDEX.md` | Root router pointing at every index in the repository. |
 | `LICENSE` | The MCAgents proprietary commercial license. |
+| `settings.gradle`, `build.gradle`, `gradle.properties` | The Gradle multi project build configuration. |
+| `gradlew`, `gradlew.bat`, `gradle/` | The Gradle wrapper and the version catalog. |
+| `api/`, `common/`, `platforms/` | The ten build modules — see [`modules.md`](modules.md). |
 | `.agents/` | The agent instruction set — rules, git conventions, planning, security, compliance, platform knowledge, prompts, creators. |
 | `wiki/` | This documentation tree. |
 
-There is no build system, test runner, entry point, or CI pipeline in the
-repository at this point. Documentation describing any of those will be written
-when they actually land — see
-[`../environments/setup.md`](../environments/setup.md).
+There is no CI pipeline in the repository at this point. Build, test, and publish
+commands are on [`../environments/setup.md`](../environments/setup.md).
 
 ## Licensing
 

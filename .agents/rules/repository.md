@@ -10,17 +10,24 @@ the specialized rules rather than restating them.
 
 ## Current state — read this before assuming anything
 
-As of this instruction set, `MCAgents/chat` contains **no source code**. The
-tracked files are:
+`MCAgents/chat` is a **Gradle multi project build on Java 25**. The tracked files
+are:
 
 * `README.md` — project overview
 * `LICENSE` — the MCAgents proprietary commercial license
+* `settings.gradle`, `build.gradle`, `gradle.properties`, `gradlew`,
+  `gradlew.bat`, `gradle/` — the build, the wrapper, and the version catalog
+* `api/`, `common/`, `platforms/` — the ten modules, all packaged under
+  `io.github.mcagents.chat`
 * the `.agents/` instruction tree and the `wiki/` documentation tree
 
-There is therefore **no build system, test runner, entry point, or CI pipeline in
-this repository yet**. Do not describe one, do not document commands for one, and
-do not write instructions that assume one. Anything you would have to guess at is
-not a rule — it is a fabrication.
+The module graph and the published coordinates are documented once, in
+[`../../wiki/information/modules.md`](../../wiki/information/modules.md). Do not
+restate them here.
+
+There is **no CI pipeline in this repository yet**. Do not describe one, do not
+document commands for one, and do not write instructions that assume one.
+Anything you would have to guess at is not a rule — it is a fabrication.
 
 ## What the project is
 
@@ -38,8 +45,19 @@ That split is a rule, not an observation:
 * **Never call a vendor's HTTP API from this repository.** If something cannot be
   expressed through `core`'s API, the fix is a change to `core`, proposed to the
   user — not a second HTTP client here.
-* **Never duplicate a `core` type.** Depend on `mcagents-api` and
-  `mcagents-common` and use their records and contracts as they are.
+* **Never compile against `core`.** It is not a Gradle dependency and must not
+  become one. `chat` reaches the loaded core plugin through a **reflective
+  bridge** resolved at enable time against that plugin's own classloader, so this
+  jar builds with nothing published and survives a core release it was not
+  compiled against.
+* **Keep the bridge in one place.** Reflection into `core` belongs in the bridge
+  class in its platform module and nowhere else. Everything above it works
+  against this project's own `api` contracts, so the reflection is testable,
+  replaceable, and fails in exactly one place.
+* **Every bridge failure degrades, never crashes.** A missing core, an
+  incompatible version, or a moved method is reported once and leaves the chat
+  commands saying the backend is unavailable — it never prevents the plugin from
+  loading or throws in front of a player.
 
 ## Rules
 

@@ -16,13 +16,14 @@ Any page added to or removed from `wiki/` is reflected here **in the same commit
 | File | Purpose |
 |---|---|
 | [`information/overview.md`](information/overview.md) | What this repository is, what it is for, and what it contains today. |
+| [`information/modules.md`](information/modules.md) | The ten build modules, why core is not a build dependency, and what is published. |
 | [`information/licensing.md`](information/licensing.md) | Who is allowed to use the software, and under which purchase terms. |
 
 ## Environments
 
 | File | Purpose |
 |---|---|
-| [`environments/setup.md`](environments/setup.md) | Getting a local working copy, and what tooling does and does not exist yet. |
+| [`environments/setup.md`](environments/setup.md) | Getting a local working copy, and building, testing, and publishing it. |
 
 ## Child Indexes
 
