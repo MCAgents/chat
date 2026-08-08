@@ -21,4 +21,5 @@ approval — see
 
 | Version | Summary | Documents |
 |---|---|---|
+| [`0/1/0/`](0/1/0/CHANGELOG.md) | First functional release: /chat on all three server platforms, permissions, sessions, and credentials delegated to core. | `CHANGELOG.md` |
 | [`0/0/0/`](0/0/0/CHANGELOG.md) | Initial scaffold: agent instruction system, documentation structure, and the commercial license. | `CHANGELOG.md` |
