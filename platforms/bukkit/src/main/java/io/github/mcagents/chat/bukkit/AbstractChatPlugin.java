@@ -2,7 +2,7 @@ package io.github.mcagents.chat.bukkit;
 
 import io.github.mcagents.chat.api.AgentBackend;
 import io.github.mcagents.chat.api.token.TokenState;
-import io.github.mcagents.chat.bukkit.bridge.MCAgentsBridge;
+import io.github.mcagents.chat.bukkit.bridge.mcagents.MCAgentsBridge;
 import io.github.mcagents.chat.bukkit.bridge.UnavailableBackend;
 import io.github.mcagents.chat.bukkit.command.ChatCommand;
 import io.github.mcagents.chat.bukkit.config.ChatConfig;
@@ -48,6 +48,17 @@ public abstract class AbstractChatPlugin extends JavaPlugin {
      * Where requests are sent. Resolved once at enable time.
      */
     private AgentBackend backend;
+
+    /**
+     * Creates the plugin.
+     *
+     * <p>Nothing is initialised here. Bukkit constructs a plugin long before
+     * the server is ready to be asked anything, so every field is populated in
+     * {@link #onEnable()} instead.</p>
+     */
+    protected AbstractChatPlugin() {
+        // Intentionally empty — see the class comment on the enable lifecycle.
+    }
 
     /**
      * Supplies the scheduler this platform needs.

@@ -1,4 +1,4 @@
-package io.github.mcagents.chat.bukkit.bridge;
+package io.github.mcagents.chat.bukkit.bridge.mcagents;
 
 import io.github.mcagents.chat.api.AgentBackend;
 import io.github.mcagents.chat.api.AgentPrompt;
