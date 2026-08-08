@@ -24,6 +24,7 @@ credential storage, commands, permissions, and conversation state.
   whole server or client — this project never holds, stores, or rotates one. See
   [`wiki/guides/client-setup.md`](wiki/guides/client-setup.md).
 - Per-player conversations held in memory, with no database.
+- One request in flight per player — a second is refused, not queued.
 - A configurable model, defaulting to `~deepseek/deepseek-v4-flash-latest` on
   OpenRouter.
 - An agent instruction set under `.agents/` — placement rules, git conventions,

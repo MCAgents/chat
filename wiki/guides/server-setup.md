@@ -118,12 +118,35 @@ than stopping the server from booting.
 Conversations live in memory only. Nothing is written to a database, and
 everything is forgotten when the server stops.
 
+## One request at a time
+
+A player may have only one reply on the way. Sending `/chat` again while the
+first is still being answered is refused:
+
+```
+You already have a reply on the way. Wait for it before asking again.
+```
+
+Nothing is sent and nothing is billed for the refused message. It is refused
+rather than queued for three reasons: each request costs you money, two replies
+would arrive out of order, and both would be built from the same conversation
+history — so the second would be answered as though the first had never been
+asked.
+
+The wait always ends. MCAgents core bounds every request with
+`request_timeout_seconds`, so a reply either arrives or fails within that window
+and the player is freed either way. **This plugin has no timeout of its own** —
+that is deliberate, and it is why there is only one place to configure one.
+
+If a player is ever stuck, `/chat clear` releases the wait as well as the
+conversation.
+
 ## Commands
 
 | Command | Who | What it does |
 |---|---|---|
 | `/chat <message>` | Operators, or players when `player_allow: true` | Ask the AI. |
-| `/chat clear` | Any player | Forget your own conversation and start fresh. |
+| `/chat clear` | Any player | Forget your own conversation, and release the wait if one is stuck. |
 | `/chat reload` | `mcagents.chat.reload`, or op | Re-read `config.yml`. |
 
 `/chat reload` is what makes a new token live **without restarting the server or
@@ -162,6 +185,7 @@ Never a stack trace, a token, or a vendor URL — one line saying what can be do
 | Situation | Message |
 |---|---|
 | Core missing or incompatible | AI chat is unavailable — the MCAgents core plugin is missing or incompatible. |
+| A reply is already on the way | You already have a reply on the way. Wait for it before asking again. |
 | Anything else — including a missing, exhausted, or rate limited token | The AI service could not answer that. Try again shortly. |
 
 A player sees one message for every service failure, because there is nothing

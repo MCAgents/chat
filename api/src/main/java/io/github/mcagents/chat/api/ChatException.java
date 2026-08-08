@@ -40,7 +40,16 @@ public class ChatException extends RuntimeException {
          * differently. Core's own message says what actually went wrong and goes
          * to the console.</p>
          */
-        VENDOR_ERROR
+        VENDOR_ERROR,
+
+        /**
+         * The player already has a request in flight.
+         *
+         * <p>Not a failure of the service — a refusal by this project. Nothing
+         * was sent, nothing was billed, and the earlier request is still on its
+         * way. The only one of these kinds the player can act on: wait.</p>
+         */
+        ALREADY_WAITING
     }
 
     /**

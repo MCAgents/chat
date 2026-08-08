@@ -164,6 +164,16 @@ public final class ChatCommand implements CommandExecutor, TabCompleter {
         }
 
         ChatService service = plugin.chatService();
+
+        // Checked here as well as inside the service so the player is told
+        // immediately, on the thread they typed on, rather than through a
+        // failed future. The service still enforces it — this is courtesy, not
+        // the guard.
+        if (service.isWaiting(player.getUniqueId())) {
+            sender.sendMessage(ChatColor.YELLOW
+                    + "You already have a reply on the way. Wait for it before asking again.");
+            return true;
+        }
         sender.sendMessage(ChatColor.DARK_GRAY + "..." );
 
         service.ask(player.getUniqueId(), message)
@@ -216,6 +226,8 @@ public final class ChatCommand implements CommandExecutor, TabCompleter {
                         "AI chat is unavailable — the MCAgents core plugin is missing or incompatible.";
                 case VENDOR_ERROR ->
                         "The AI service could not answer that. Try again shortly.";
+                case ALREADY_WAITING ->
+                        "You already have a reply on the way. Wait for it before asking again.";
             };
         }
         return "The AI service could not answer that. Try again shortly.";
