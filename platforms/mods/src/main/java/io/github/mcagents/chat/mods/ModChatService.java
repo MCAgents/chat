@@ -1,12 +1,9 @@
 package io.github.mcagents.chat.mods;
 
 import io.github.mcagents.chat.api.AgentBackend;
-import io.github.mcagents.chat.api.token.TokenState;
 import io.github.mcagents.chat.common.ChatService;
 import io.github.mcagents.chat.common.ChatSettings;
-import io.github.mcagents.chat.mods.store.SharedTokenStore;
 
-import java.nio.file.Path;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -16,10 +13,15 @@ import java.util.logging.Logger;
  * The mod side entry point, mirroring what the plugin's lifecycle does on a
  * server.
  *
- * <p>A loader module builds one of these with its game directory, its logger,
- * and its own bridge to MCAgents core, then calls {@link #ask(String)} from its
- * chat command. The loader-specific parts stay in the loader's module; this
- * class holds everything the two loaders share.</p>
+ * <p>A loader module builds one of these with its logger and its own bridge to
+ * MCAgents core, then calls {@link #ask(String)} from its chat command. The
+ * loader-specific parts stay in the loader's module; this class holds everything
+ * the two loaders share.</p>
+ *
+ * <p><strong>No credentials pass through here.</strong> MCAgents core owns the
+ * shared {@code mcagents.json} under the Minecraft directory, along with the
+ * rotation and the eviction. This class asks core what state the credentials are
+ * in and reports it — nothing more.</p>
  *
  * <p>A client has exactly one player, so unlike the server there is no player
  * identity to key a conversation on. {@link #CLIENT_SESSION} stands in for it,
@@ -37,11 +39,6 @@ public final class ModChatService {
     public static final UUID CLIENT_SESSION = UUID.nameUUIDFromBytes("mcagents-chat-client".getBytes());
 
     /**
-     * The shared credential file.
-     */
-    private final SharedTokenStore store;
-
-    /**
      * Where problems are reported.
      */
     private final Logger logger;
@@ -54,9 +51,6 @@ public final class ModChatService {
     /**
      * Builds the mod side service.
      *
-     * @param loaderDirectory The game directory the loader reported, or
-     *                        {@code null} to fall back to the conventional
-     *                        location for this operating system.
      * @param backend The loader's bridge to MCAgents core.
      * @param logger Where to report problems.
      * @param platform Which platform to talk to, as core names it.
@@ -64,12 +58,10 @@ public final class ModChatService {
      * @throws IllegalArgumentException When {@code platform} names no supported
      *                                  platform.
      */
-    public ModChatService(Path loaderDirectory, AgentBackend backend, Logger logger, String platform) {
+    public ModChatService(AgentBackend backend, Logger logger, String platform) {
         this.logger = Objects.requireNonNull(logger, "logger cannot be null");
-        this.store = new SharedTokenStore(loaderDirectory, logger);
         this.service = new ChatService(
                 Objects.requireNonNull(backend, "backend cannot be null"),
-                store,
                 ChatSettings.of(platform));
 
         report();
@@ -100,26 +92,18 @@ public final class ModChatService {
     }
 
     /**
-     * Re-reads the shared credential file without restarting the game.
+     * Asks MCAgents core to re-read its shared credential file.
      *
      * <p>This is what backs the mod's reload command. A token added by hand — or
-     * by another MCAgents mod — becomes usable immediately.</p>
+     * by another MCAgents mod — becomes usable immediately, without restarting
+     * the game.</p>
      *
-     * @return The credential state after reloading, so the caller can report it.
+     * @return Core's credential state afterwards, so the caller can report it.
      */
-    public TokenState reload() {
-        TokenState state = service.reload(service.settings());
+    public String reload() {
+        String state = service.reload(service.settings());
         report();
         return state;
-    }
-
-    /**
-     * Returns the path of the shared credential file, for a diagnostic message.
-     *
-     * @return The path, never a credential.
-     */
-    public String storePath() {
-        return store.describe();
     }
 
     /**
@@ -128,11 +112,13 @@ public final class ModChatService {
      */
     private void report() {
         switch (service.tokenState()) {
-            case READY -> logger.info("MCAgents chat: tokens ready (" + store.file().getFileName() + ").");
-            case NOT_SET -> logger.warning("MCAgents chat: no token configured in " + store.file()
-                    + ". Add one and run the chat reload command.");
-            case EXPIRED -> logger.warning("MCAgents chat: every token in " + store.file()
-                    + " was rejected and removed. Add a working one.");
+            case "READY" -> logger.info("MCAgents chat: tokens ready.");
+            case "NOT_SET" -> logger.warning("MCAgents chat: MCAgents core has no token for "
+                    + service.settings().vendorCode() + ". Add one to mcagents.json in your Minecraft "
+                    + "directory, then run the chat reload command.");
+            case "EXPIRED" -> logger.warning("MCAgents chat: every token MCAgents core had for "
+                    + service.settings().vendorCode() + " was rejected and removed.");
+            default -> logger.warning("MCAgents chat: could not read the credential state from MCAgents core.");
         }
     }
 }

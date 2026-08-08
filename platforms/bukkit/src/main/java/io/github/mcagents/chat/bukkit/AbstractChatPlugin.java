@@ -1,12 +1,10 @@
 package io.github.mcagents.chat.bukkit;
 
 import io.github.mcagents.chat.api.AgentBackend;
-import io.github.mcagents.chat.api.token.TokenState;
-import io.github.mcagents.chat.bukkit.bridge.mcagents.MCAgentsBridge;
+import io.github.mcagents.chat.bukkit.bridge.mcagents.core.MCAgentsBridge;
 import io.github.mcagents.chat.bukkit.bridge.UnavailableBackend;
 import io.github.mcagents.chat.bukkit.command.ChatCommand;
 import io.github.mcagents.chat.bukkit.config.ChatConfig;
-import io.github.mcagents.chat.bukkit.config.YamlTokenStore;
 import io.github.mcagents.chat.bukkit.scheduler.ChatScheduler;
 import io.github.mcagents.chat.common.ChatService;
 import io.github.mcagents.chat.common.ChatSettings;
@@ -32,11 +30,6 @@ public abstract class AbstractChatPlugin extends JavaPlugin {
      * plugin manifest.
      */
     private static final String CORE_PLUGIN = "MCAgents";
-
-    /**
-     * The credential and settings file. Held so a reload can re-read it.
-     */
-    private YamlTokenStore store;
 
     /**
      * The chat entry point. Replaced only when the configured platform changes,
@@ -81,11 +74,11 @@ public abstract class AbstractChatPlugin extends JavaPlugin {
      */
     @Override
     public void onEnable() {
-        this.store = new YamlTokenStore(this);
-        ChatSettings settings = ChatConfig.read(store.config(), getLogger());
+        saveDefaultConfig();
+        ChatSettings settings = ChatConfig.read(getConfig(), getLogger());
 
         this.backend = resolveBackend();
-        this.service = new ChatService(backend, store, settings);
+        this.service = new ChatService(backend, settings);
 
         ChatCommand command = new ChatCommand(this, createScheduler());
         if (getCommand("chat") != null) {
@@ -108,7 +101,6 @@ public abstract class AbstractChatPlugin extends JavaPlugin {
     public void onDisable() {
         this.service = null;
         this.backend = null;
-        this.store = null;
     }
 
     /**
@@ -135,19 +127,14 @@ public abstract class AbstractChatPlugin extends JavaPlugin {
     /**
      * Re-reads configuration and applies it, without restarting the server.
      *
-     * <p>Changing the platform rebuilds the service, because a service owns the
-     * credential pool for one vendor. Everything else is applied in place.</p>
+     * <p>Also asks MCAgents core to re-read its credential file, so a key added
+     * there becomes usable without a second command.</p>
      *
-     * @return The credential state after reloading, so the caller can report it.
+     * @return Core's credential state afterwards, so the caller can report it.
      */
-    public TokenState reloadChat() {
-        store.reload();
-        ChatSettings updated = ChatConfig.read(store.config(), getLogger());
-
-        if (!updated.vendorCode().equals(service.settings().vendorCode())) {
-            this.service = new ChatService(backend, store, updated);
-            return service.tokenState();
-        }
+    public String reloadChat() {
+        reloadConfig();
+        ChatSettings updated = ChatConfig.read(getConfig(), getLogger());
         return service.reload(updated);
     }
 
@@ -163,10 +150,13 @@ public abstract class AbstractChatPlugin extends JavaPlugin {
         getLogger().info("Players may chat: " + settings.playerAllowed());
 
         switch (service.tokenState()) {
-            case READY -> getLogger().info("Tokens: ready.");
-            case NOT_SET -> getLogger().warning("Tokens: none configured for " + settings.vendorCode()
-                    + ". Add one to config.yml and run /chat reload.");
-            case EXPIRED -> getLogger().warning("Tokens: every configured token has been rejected and removed.");
+            case "READY" -> getLogger().info("Tokens: ready.");
+            case "NOT_SET" -> getLogger().warning("Tokens: MCAgents core has no token for "
+                    + settings.vendorCode() + ". Add one to plugins/MCAgents/config.yml, "
+                    + "then run /mcagents reload.");
+            case "EXPIRED" -> getLogger().warning("Tokens: every token MCAgents core had for "
+                    + settings.vendorCode() + " was rejected and removed.");
+            default -> getLogger().warning("Tokens: could not read the credential state from MCAgents core.");
         }
     }
 

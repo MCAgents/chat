@@ -5,13 +5,10 @@ import io.github.mcagents.chat.api.AgentPrompt;
 import io.github.mcagents.chat.api.AgentReply;
 import io.github.mcagents.chat.api.ChatException;
 import io.github.mcagents.chat.api.ChatTurn;
-import io.github.mcagents.chat.api.token.TokenState;
-import io.github.mcagents.chat.api.token.TokenStore;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -24,16 +21,17 @@ import java.util.concurrent.CompletionException;
  * between — the session, the credential rotation, the prompt shape — happens
  * here, identically on every platform.</p>
  *
- * <h2>Credential rotation</h2>
+ * <h2>No credentials here</h2>
  *
- * <p>A request that fails because the vendor rejected the credential is retried
- * on the next one, and the rejected credential is deleted from storage. A
- * request that fails because of a rate limit is retried on the next credential
- * and the current one is <strong>kept</strong>. Anything else is not retried at
- * all, because nothing was learned about the credential.</p>
+ * <p>This project holds no API tokens. MCAgents core owns the credential file,
+ * the pool, the rotation, and the eviction — including the decision that a
+ * rejected key is dead while a rate limited one is merely busy. That decision is
+ * destructive to get wrong, so it is written once, in core, rather than repeated
+ * in every consumer.</p>
  *
- * <p>The retry is bounded by how many credentials are left, so a server whose
- * keys have all expired fails after one pass rather than looping.</p>
+ * <p>All this does is ask core what state a vendor's credentials are in, so a
+ * command can tell a server owner to add a key or to find out why their keys
+ * stopped working.</p>
  *
  * <h2>Prompt caching</h2>
  *
@@ -59,11 +57,6 @@ public final class ChatService {
     private final AgentBackend backend;
 
     /**
-     * The credentials for the configured vendor, and which one is in use.
-     */
-    private final TokenPool tokens;
-
-    /**
      * Every player's running conversation.
      */
     private final SessionStore sessions;
@@ -78,17 +71,13 @@ public final class ChatService {
      * Builds a service.
      *
      * @param backend Where to send requests.
-     * @param store Where the credentials live.
      * @param settings The settings to start with.
      * @throws NullPointerException When any argument is {@code null}.
      */
-    public ChatService(AgentBackend backend, TokenStore store, ChatSettings settings) {
+    public ChatService(AgentBackend backend, ChatSettings settings) {
         this.backend = Objects.requireNonNull(backend, "backend cannot be null");
         this.settings = Objects.requireNonNull(settings, "settings cannot be null");
-        this.tokens = new TokenPool(settings.vendorCode(), Objects.requireNonNull(store, "store cannot be null"));
         this.sessions = new SessionStore(settings.maxTurns(), settings.sessionIdleTimeout());
-
-        installCurrentToken();
     }
 
     /**
@@ -103,10 +92,11 @@ public final class ChatService {
     /**
      * Reports whether this vendor can currently be called, and if not, why not.
      *
-     * @return The credential state.
+     * @return Core's state name — {@code "READY"}, {@code "NOT_SET"}, or
+     *         {@code "EXPIRED"}.
      */
-    public TokenState tokenState() {
-        return tokens.state();
+    public String tokenState() {
+        return backend.tokenState(settings.vendorCode());
     }
 
     /**
@@ -138,18 +128,17 @@ public final class ChatService {
                     "The MCAgents core plugin is not available, so nothing can be asked."));
         }
 
-        ChatException credentialFailure = checkCredentials();
-        if (credentialFailure != null) {
-            return CompletableFuture.failedFuture(credentialFailure);
-        }
-
         ChatSession session = sessions.get(playerUuid);
         session.append(ChatTurn.user(message));
 
-        return send(session, tokens.remaining()).thenApply(reply -> {
-            session.append(reply.asTurn());
-            return reply;
-        });
+        return backend.send(buildPrompt(session))
+                .handle((reply, failure) -> {
+                    if (failure != null) {
+                        throw new CompletionException(asChatException(failure));
+                    }
+                    session.append(reply.asTurn());
+                    return reply;
+                });
     }
 
     /**
@@ -180,58 +169,20 @@ public final class ChatService {
      * continuing a conversation half built under the old ones produces replies
      * nobody can explain.</p>
      *
-     * @param updated The settings to adopt. Its vendor must match the one this
-     *                service was built for — changing vendors means rebuilding
-     *                the service, since the credential pool belongs to a vendor.
-     * @return The credential state after reloading, so the caller can report it.
-     * @throws IllegalArgumentException When {@code updated} names a different
-     *                                  vendor.
+     * <p>Also asks core to re-read its credential file, so a key the owner just
+     * pasted into core's config becomes usable from this command too.</p>
+     *
+     * @param updated The settings to adopt. Changing the platform is fine here:
+     *                nothing in this service is bound to a vendor any more.
+     * @return Core's credential state afterwards, so the caller can report it.
      */
-    public TokenState reload(ChatSettings updated) {
+    public String reload(ChatSettings updated) {
         Objects.requireNonNull(updated, "updated cannot be null");
-        if (!updated.vendorCode().equals(tokens.vendorCode())) {
-            throw new IllegalArgumentException("Changing the platform from " + tokens.vendorCode()
-                    + " to " + updated.vendorCode() + " requires rebuilding the service");
-        }
 
         this.settings = updated;
-        tokens.reload();
         sessions.clearAll();
-        installCurrentToken();
-        return tokens.state();
-    }
-
-    /**
-     * Sends the session's conversation, rotating credentials on failure.
-     *
-     * @param session The conversation to send.
-     * @param attemptsLeft How many credentials may still be tried. Bounds the
-     *                     recursion, so an exhausted pool fails after one pass.
-     * @return A CompletableFuture containing the reply.
-     */
-    private CompletableFuture<AgentReply> send(ChatSession session, int attemptsLeft) {
-        return backend.send(buildPrompt(session)).handle((reply, failure) -> {
-            if (failure == null) {
-                return CompletableFuture.completedFuture(reply);
-            }
-
-            ChatException chatFailure = asChatException(failure);
-            Optional<String> next = switch (chatFailure.kind()) {
-                // The credential is dead: drop it from the pool and from disk.
-                case TOKEN_REJECTED -> tokens.reject();
-                // The credential is healthy and busy: move on, but keep it.
-                case RATE_LIMITED -> tokens.rotate();
-                // Nothing was learned about the credential. Do not touch it.
-                default -> Optional.empty();
-            };
-
-            if (next.isEmpty() || attemptsLeft <= 1) {
-                return CompletableFuture.<AgentReply>failedFuture(exhaust(chatFailure));
-            }
-
-            backend.useToken(tokens.vendorCode(), next.get());
-            return send(session, attemptsLeft - 1);
-        }).thenCompose(future -> future);
+        backend.reloadTokens();
+        return backend.tokenState(updated.vendorCode());
     }
 
     /**
@@ -254,51 +205,6 @@ public final class ChatService {
                 current.systemPrompt(),
                 history,
                 current.maxTokens());
-    }
-
-    /**
-     * Hands the current credential to the backend, if there is one.
-     */
-    private void installCurrentToken() {
-        tokens.current().ifPresent(token -> backend.useToken(tokens.vendorCode(), token));
-    }
-
-    /**
-     * Fails early when no credential is usable.
-     *
-     * @return The failure to report, or {@code null} when a credential is
-     *         available.
-     */
-    private ChatException checkCredentials() {
-        return switch (tokens.state()) {
-            case READY -> null;
-            case NOT_SET -> new ChatException(ChatException.Kind.NO_TOKEN,
-                    "No token is configured for " + tokens.vendorCode() + ".");
-            case EXPIRED -> new ChatException(ChatException.Kind.TOKENS_EXPIRED,
-                    "Every token configured for " + tokens.vendorCode()
-                            + " was rejected and removed. Add a working token and run the reload command.");
-        };
-    }
-
-    /**
-     * Reports a failure that used up the last credential as an exhaustion
-     * rather than as the individual vendor error.
-     *
-     * <p>"Every token was rejected" is what the server owner has to act on; the
-     * last vendor message is kept as the cause for the log.</p>
-     *
-     * @param failure The failure that ended the attempt.
-     * @return The failure to hand back.
-     */
-    private ChatException exhaust(ChatException failure) {
-        if (failure.kind() == ChatException.Kind.TOKEN_REJECTED
-                && tokens.state() == TokenState.EXPIRED) {
-            return new ChatException(ChatException.Kind.TOKENS_EXPIRED,
-                    "Every token configured for " + tokens.vendorCode()
-                            + " was rejected and removed. Add a working token and run the reload command.",
-                    failure);
-        }
-        return failure;
     }
 
     /**
