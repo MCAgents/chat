@@ -1,6 +1,12 @@
 # Client Setup
 
-How the mod side stores credentials, and where to put yours.
+Where to put your API token on a client.
+
+**The file belongs to MCAgents core, not to this mod.** Core resolves it, reads
+it, rotates the keys in it, and removes a dead one. This mod holds no credentials
+and never touches the file — it asks core for a reply and is told what state the
+credentials are in. Everything below describes core's file, documented here
+because this is the mod you are installing.
 
 ## One file for every MCAgents mod
 

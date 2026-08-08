@@ -6,6 +6,9 @@
 #
 #  After editing this file, run:  /chat reload
 #  There is no need to restart the server or rejoin.
+#
+#  API TOKENS ARE NOT IN THIS FILE. They live in the MCAgents core
+#  plugin at plugins/MCAgents/config.yml — see below.
 # =====================================================================
 
 
@@ -42,38 +45,17 @@ player_allow: false
 
 
 # ---------------------------------------------------------------------
-#  API tokens.
+#  API tokens are NOT configured here.
 #
-#  Each platform takes a LIST of tokens. Supplying more than one is
-#  useful for two reasons:
+#  They live in the MCAgents core plugin, once, for the whole server:
 #
-#    * When the service rate limits one key, the plugin moves to the
-#      next and keeps the busy one.
-#    * When the service REJECTS a key — expired, revoked, out of credit
-#      — the plugin moves to the next AND DELETES the dead key from this
-#      file, so it is not retried forever.
+#      plugins/MCAgents/config.yml
 #
-#  Only a rejection deletes a key. A rate limit, a timeout, or a service
-#  outage never does.
+#  Every MCAgents plugin reads its credentials from there, so a key is
+#  pasted once and rotated once rather than copied into each plugin.
 #
-#  Keep this file private. Anyone who can read it can spend your credit.
+#  After adding a key there, run:  /mcagents reload
 # ---------------------------------------------------------------------
-
-openrouter:
-  token:
-    - "your_openrouter_token"
-
-openai:
-  token:
-    - "your_openai_token"
-
-deepseek:
-  token:
-    - "your_deepseek_token"
-
-anthropic:
-  token:
-    - "your_anthropic_token"
 
 
 # ---------------------------------------------------------------------

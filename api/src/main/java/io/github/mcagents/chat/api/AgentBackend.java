@@ -34,22 +34,31 @@ public interface AgentBackend {
     boolean isAvailable();
 
     /**
-     * Supplies the credential the backend should use for a vendor from now on.
+     * Reports whether a vendor has a usable credential, and if not, why not.
      *
-     * <p>Called at startup, on reload, and whenever the token pool rotates.
-     * Replacing a credential for a vendor already configured is expected and
-     * must take effect for the next request.</p>
+     * <p>This project holds no credentials. MCAgents core owns the token file,
+     * the rotation, and the eviction; all this asks is what core currently
+     * knows, so a command can tell a server owner to add a key or to find out
+     * why their keys stopped working.</p>
      *
-     * <p>Implementations must never log, echo, or otherwise reveal
-     * {@code apiKey}.</p>
-     *
-     * @param vendorCode The vendor to configure, as core names it.
-     * @param apiKey The credential to use.
-     * @return {@code true} when the backend accepted the credential. This says
-     *         nothing about whether the vendor will accept it — no network call
-     *         is made.
+     * @param vendorCode The vendor to ask about, as core names it.
+     * @return {@code "READY"}, {@code "NOT_SET"}, or {@code "EXPIRED"} — core's
+     *         own state names, passed through as text because this module does
+     *         not compile against core's enum. Any other value means the state
+     *         could not be read.
      */
-    boolean useToken(String vendorCode, String apiKey);
+    String tokenState(String vendorCode);
+
+    /**
+     * Asks core to re-read its credential file.
+     *
+     * <p>Backs the reload command. The credentials themselves are core's, so
+     * this is a request rather than an update — nothing here holds a token to
+     * replace.</p>
+     *
+     * @return {@code true} when core reloaded.
+     */
+    boolean reloadTokens();
 
     /**
      * Sends one exchange and returns the model's reply.

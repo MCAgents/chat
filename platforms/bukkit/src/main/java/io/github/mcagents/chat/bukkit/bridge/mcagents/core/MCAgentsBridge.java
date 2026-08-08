@@ -1,4 +1,4 @@
-package io.github.mcagents.chat.bukkit.bridge.mcagents;
+package io.github.mcagents.chat.bukkit.bridge.mcagents.core;
 
 import io.github.mcagents.chat.api.AgentBackend;
 import io.github.mcagents.chat.api.AgentPrompt;
@@ -50,11 +50,6 @@ public final class MCAgentsBridge implements AgentBackend {
     private static final String VENDOR_CLASS = "io.github.mcagents.core.api.llm.LlmVendor";
 
     /**
-     * The credential record core is configured with.
-     */
-    private static final String CREDENTIALS_CLASS = "io.github.mcagents.core.api.llm.LlmCredentials";
-
-    /**
      * The request record, built through its own nested builder.
      */
     private static final String REQUEST_CLASS = "io.github.mcagents.core.api.chat.ChatRequest";
@@ -81,14 +76,14 @@ public final class MCAgentsBridge implements AgentBackend {
     private final Method vendorFromCode;
 
     /**
-     * {@code LlmCredentials.of(LlmVendor, String)}.
+     * {@code MCAgentsProvider.tokenState(LlmVendor)}.
      */
-    private final Method credentialsOf;
+    private final Method tokenState;
 
     /**
-     * {@code MCAgentsProvider.register(LlmCredentials)}.
+     * {@code MCAgentsProvider.reloadTokens()}.
      */
-    private final Method register;
+    private final Method reloadTokens;
 
     /**
      * {@code MCAgentsProvider.chat(LlmVendor, ChatRequest)}.
@@ -148,8 +143,8 @@ public final class MCAgentsBridge implements AgentBackend {
         this.logger = logger;
         this.provider = handles.provider;
         this.vendorFromCode = handles.vendorFromCode;
-        this.credentialsOf = handles.credentialsOf;
-        this.register = handles.register;
+        this.tokenState = handles.tokenState;
+        this.reloadTokens = handles.reloadTokens;
         this.chat = handles.chat;
         this.requestBuilder = handles.requestBuilder;
         this.builderSystem = handles.builderSystem;
@@ -188,7 +183,6 @@ public final class MCAgentsBridge implements AgentBackend {
 
             Class<?> providerClass = Class.forName(PROVIDER_CLASS, false, loader);
             Class<?> vendorClass = Class.forName(VENDOR_CLASS, false, loader);
-            Class<?> credentialsClass = Class.forName(CREDENTIALS_CLASS, false, loader);
             Class<?> requestClass = Class.forName(REQUEST_CLASS, false, loader);
             Class<?> builderClass = Class.forName(REQUEST_CLASS + "$Builder", false, loader);
             Class<?> responseClass = Class.forName("io.github.mcagents.core.api.chat.ChatResponse", false, loader);
@@ -197,8 +191,8 @@ public final class MCAgentsBridge implements AgentBackend {
 
             Handles handles = new Handles();
             handles.vendorFromCode = vendorClass.getMethod("fromCode", String.class);
-            handles.credentialsOf = credentialsClass.getMethod("of", vendorClass, String.class);
-            handles.register = providerClass.getMethod("register", credentialsClass);
+            handles.tokenState = providerClass.getMethod("tokenState", vendorClass);
+            handles.reloadTokens = providerClass.getMethod("reloadTokens");
             handles.chat = providerClass.getMethod("chat", vendorClass, requestClass);
             handles.requestBuilder = requestClass.getMethod("builder", String.class);
             handles.builderSystem = builderClass.getMethod("system", String.class);
@@ -215,10 +209,14 @@ public final class MCAgentsBridge implements AgentBackend {
             handles.exceptionIsAuthFailure = exceptionClass.getMethod("isAuthFailure");
             handles.exceptionIsRateLimited = exceptionClass.getMethod("isRateLimited");
 
-            // Create the provider last: everything above is a lookup, and a
-            // failure after this point would leave an orphaned provider holding
-            // HTTP clients nothing can close.
-            handles.provider = providerClass.getMethod("create").invoke(null);
+            // The provider is the core plugin's own singleton, created when that
+            // plugin enabled. Creating a second one here would give this plugin
+            // its own client registry and its own credential pools — and the
+            // credentials belong to core's configuration, not to this plugin's.
+            handles.provider = providerClass.getField("instance").get(null);
+            if (handles.provider == null) {
+                throw new IllegalStateException("MCAgents core has not installed a provider yet");
+            }
 
             return Optional.of(new MCAgentsBridge(logger, handles));
         } catch (ReflectiveOperationException | RuntimeException e) {
@@ -245,21 +243,36 @@ public final class MCAgentsBridge implements AgentBackend {
     /**
      * {@inheritDoc}
      *
-     * <p>Registering a vendor core already holds replaces it, which is what
-     * makes credential rotation take effect on the next request.</p>
+     * <p>Reads core's own {@code TokenState} enum and passes back its constant
+     * name. This plugin holds no credentials, so there is nothing here to set —
+     * only something to ask.</p>
      */
     @Override
-    public boolean useToken(String vendorCode, String apiKey) {
+    public String tokenState(String vendorCode) {
         try {
             Object vendor = vendorFromCode.invoke(null, vendorCode);
-            Object credentials = credentialsOf.invoke(null, vendor, apiKey);
-            register.invoke(provider, credentials);
+            Object state = tokenState.invoke(provider, vendor);
+            return state instanceof Enum<?> constant ? constant.name() : "UNKNOWN";
+        } catch (ReflectiveOperationException | RuntimeException e) {
+            logSendFailureOnce(e);
+            return "UNKNOWN";
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Asks core to re-read its own credential file. The file is core's, so
+     * this plugin cannot and does not touch it.</p>
+     */
+    @Override
+    public boolean reloadTokens() {
+        try {
+            reloadTokens.invoke(provider);
             return true;
         } catch (ReflectiveOperationException | RuntimeException e) {
-            // Deliberately no credential in this message, and none in the
-            // exception either — this is the one method that holds one.
-            logger.warning("MCAgents core refused the credential for " + vendorCode
-                    + " (" + e.getClass().getSimpleName() + ").");
+            logger.warning("MCAgents core could not reload its credentials ("
+                    + e.getClass().getSimpleName() + ").");
             return false;
         }
     }
@@ -427,8 +440,8 @@ public final class MCAgentsBridge implements AgentBackend {
     private static final class Handles {
         private Object provider;
         private Method vendorFromCode;
-        private Method credentialsOf;
-        private Method register;
+        private Method tokenState;
+        private Method reloadTokens;
         private Method chat;
         private Method requestBuilder;
         private Method builderSystem;

@@ -20,11 +20,10 @@ credential storage, commands, permissions, and conversation state.
 - `/chat`, `/chat clear`, and `/chat reload` on SpigotMC, PaperMC, and Folia,
   with permissions and a documented `config.yml`. See
   [`wiki/guides/server-setup.md`](wiki/guides/server-setup.md).
-- A shared `mcagents.json` credential file for the mod side, so every MCAgents
-  mod reads one set of tokens. See
+- **No credentials of its own.** API tokens live in MCAgents core, once, for the
+  whole server or client — this project never holds, stores, or rotates one. See
   [`wiki/guides/client-setup.md`](wiki/guides/client-setup.md).
-- Token pooling that rotates on a rate limit and evicts only on a rejection, and
-  per-player conversations held in memory with no database.
+- Per-player conversations held in memory, with no database.
 - An agent instruction set under `.agents/` — placement rules, git conventions,
   task workflow, token handling, licensing, platform knowledge, and the creator
   agents that maintain the trees.

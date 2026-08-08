@@ -45,11 +45,21 @@ public final class UnavailableBackend implements AgentBackend {
     /**
      * {@inheritDoc}
      *
-     * <p>Accepts nothing. Returning {@code false} keeps a credential from being
-     * mistaken for installed when there is nothing to install it into.</p>
+     * <p>Always unknown: with no backend there is nobody to ask about
+     * credentials.</p>
      */
     @Override
-    public boolean useToken(String vendorCode, String apiKey) {
+    public String tokenState(String vendorCode) {
+        return "UNKNOWN";
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Always {@code false}: there is nothing to reload.</p>
+     */
+    @Override
+    public boolean reloadTokens() {
         return false;
     }
 

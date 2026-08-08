@@ -1,7 +1,6 @@
 package io.github.mcagents.chat.bukkit.command;
 
 import io.github.mcagents.chat.api.ChatException;
-import io.github.mcagents.chat.api.token.TokenState;
 import io.github.mcagents.chat.bukkit.AbstractChatPlugin;
 import io.github.mcagents.chat.bukkit.scheduler.ChatScheduler;
 import io.github.mcagents.chat.common.ChatService;
@@ -112,7 +111,7 @@ public final class ChatCommand implements CommandExecutor, TabCompleter {
         }
 
         try {
-            TokenState state = plugin.reloadChat();
+            String state = plugin.reloadChat();
             sender.sendMessage(ChatColor.GREEN + "MCAgents chat reloaded.");
             sender.sendMessage(ChatColor.GRAY + "  platform: " + ChatColor.WHITE
                     + plugin.chatService().settings().vendorCode());
@@ -228,14 +227,15 @@ public final class ChatCommand implements CommandExecutor, TabCompleter {
     /**
      * Describes a credential state for the reload output.
      *
-     * @param state The state to describe.
+     * @param state Core's state name.
      * @return A short phrase.
      */
-    private String describe(TokenState state) {
+    private String describe(String state) {
         return switch (state) {
-            case READY -> "ready";
-            case NOT_SET -> "not set — add one to config.yml";
-            case EXPIRED -> "expired — every token was rejected and removed";
+            case "READY" -> "ready";
+            case "NOT_SET" -> "not set — add one to plugins/MCAgents/config.yml";
+            case "EXPIRED" -> "expired — every token was rejected and removed";
+            default -> "unknown — MCAgents core did not answer";
         };
     }
 

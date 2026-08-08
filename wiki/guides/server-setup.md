@@ -37,31 +37,23 @@ The **model is fixed in code** per platform and is not configurable. A mistyped
 model produces a rejection that looks exactly like a bad key, and telling those
 apart from a server log is miserable.
 
-### Add tokens
+### Tokens are not configured here
 
-```yaml
-openrouter:
-  token:
-    - "sk-or-v1-..."
-    - "sk-or-v1-..."
+They live in the **MCAgents core plugin**, once, for the whole server:
+
+```
+plugins/MCAgents/config.yml
 ```
 
-Each platform takes a **list**. More than one is worth having:
+Every MCAgents plugin reads its credentials from there, so a key is pasted once
+and rotated once rather than copied into each plugin. This plugin has no token
+settings at all, and holds no credential in memory.
 
-* When the service **rate limits** a key, the plugin moves to the next and
-  **keeps** the busy one.
-* When the service **rejects** a key — expired, revoked, out of credit — the
-  plugin moves to the next **and deletes the dead key from `config.yml`**, so it
-  is not retried on every request forever.
+After adding a key there, run `/mcagents reload`.
 
-Only a rejection deletes a key. A rate limit, a timeout, or a service outage
-never does.
-
-When every key has been rejected, `/chat` says so specifically — "every token was
-rejected" rather than "no token configured" — because the two call for different
-fixes.
-
-> Keep `config.yml` private. Anyone who can read it can spend your credit.
+Core owns the whole credential lifecycle: it retries on the next key when a
+service **rejects** one and deletes the dead key, retries and **keeps** the key
+when a service **rate limits** it, and touches nothing on any other failure.
 
 ### Decide who may chat
 
@@ -117,6 +109,10 @@ MCAgents chat reloaded.
   tokens: ready
 ```
 
+`/chat reload` also asks core to re-read its credential file, so a key you just
+pasted into `plugins/MCAgents/config.yml` becomes usable from this command
+alone.
+
 Conversations are dropped on reload on purpose: settings that shape a prompt may
 have changed, and continuing a conversation half-built under the old ones
 produces replies nobody can explain.
@@ -139,7 +135,7 @@ Never a stack trace, a token, or a vendor URL — one line saying what can be do
 | Situation | Message |
 |---|---|
 | Core missing or incompatible | AI chat is unavailable — the MCAgents core plugin is missing or incompatible. |
-| No token configured | AI chat has no API token configured. An administrator must add one to config.yml. |
+| No token configured | AI chat has no API token configured. An administrator must add one to `plugins/MCAgents/config.yml`. |
 | Every token rejected | Every configured API token has been rejected. An administrator must add a working one. |
 | Rate limited | The AI service is rate limiting requests. Try again in a moment. |
 | Anything else | The AI service could not answer that. Try again shortly. |

@@ -8,10 +8,6 @@ dependencies {
     compileOnly project(':api')
     compileOnly project(':common')
 
-    // JSON codec for the shared credential file under the Minecraft directory.
-    // compileOnly because Minecraft itself puts Gson on the classpath for both
-    // loaders, so shading a second copy would be waste.
-    compileOnly libs.gson
 }
 
 // No mod loader coordinate is declared here. This module is the loader
