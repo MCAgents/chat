@@ -24,6 +24,7 @@ Any page added to or removed from `wiki/` is reflected here **in the same commit
 | File | Purpose |
 |---|---|
 | [`guides/server-setup.md`](guides/server-setup.md) | Installing and configuring the plugin: platform, tokens, permissions, and the reload command. |
+| [`guides/client-setup.md`](guides/client-setup.md) | Where the mod keeps credentials, and how the shared mcagents.json file works. |
 
 ## Environments
 
