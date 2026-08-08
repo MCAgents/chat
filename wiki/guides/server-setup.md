@@ -49,7 +49,13 @@ Every MCAgents plugin reads its credentials from there, so a key is pasted once
 and rotated once rather than copied into each plugin. This plugin has no token
 settings at all, and holds no credential in memory.
 
-After adding a key there, run `/mcagents reload`.
+Manage them with core's own command:
+
+```
+/agents                                   credential status
+/agents <platform> token add <token>      store a token
+/agents <platform> token remove <handle>  revoke one
+```
 
 Core owns the whole credential lifecycle: it retries on the next key when a
 service **rejects** one and deletes the dead key, retries and **keeps** the key
@@ -109,9 +115,8 @@ MCAgents chat reloaded.
   tokens: ready
 ```
 
-`/chat reload` also asks core to re-read its credential file, so a key you just
-pasted into `plugins/MCAgents/config.yml` becomes usable from this command
-alone.
+`/chat reload` reloads **this plugin's settings only**. API tokens belong to
+MCAgents core — add, revoke, or reload them with `/agents`.
 
 Conversations are dropped on reload on purpose: settings that shape a prompt may
 have changed, and continuing a conversation half-built under the old ones
@@ -135,9 +140,10 @@ Never a stack trace, a token, or a vendor URL — one line saying what can be do
 | Situation | Message |
 |---|---|
 | Core missing or incompatible | AI chat is unavailable — the MCAgents core plugin is missing or incompatible. |
-| No token configured | AI chat has no API token configured. An administrator must add one to `plugins/MCAgents/config.yml`. |
-| Every token rejected | Every configured API token has been rejected. An administrator must add a working one. |
-| Rate limited | The AI service is rate limiting requests. Try again in a moment. |
-| Anything else | The AI service could not answer that. Try again shortly. |
+| Anything else — including a missing, exhausted, or rate limited token | The AI service could not answer that. Try again shortly. |
+
+A player sees one message for every service failure, because there is nothing
+they could do differently about any of them. The console gets core's own message,
+which says exactly what went wrong — run `/agents` to see credential status.
 
 The console gets the detail, logged once rather than on every message.

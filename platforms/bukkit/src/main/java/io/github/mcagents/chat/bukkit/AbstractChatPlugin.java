@@ -127,15 +127,12 @@ public abstract class AbstractChatPlugin extends JavaPlugin {
     /**
      * Re-reads configuration and applies it, without restarting the server.
      *
-     * <p>Also asks MCAgents core to re-read its credential file, so a key added
-     * there becomes usable without a second command.</p>
-     *
-     * @return Core's credential state afterwards, so the caller can report it.
+     * <p>Only this plugin's own settings. API tokens belong to MCAgents core and
+     * are reloaded with {@code /agents reload}.</p>
      */
-    public String reloadChat() {
+    public void reloadChat() {
         reloadConfig();
-        ChatSettings updated = ChatConfig.read(getConfig(), getLogger());
-        return service.reload(updated);
+        service.reload(ChatConfig.read(getConfig(), getLogger()));
     }
 
     /**
@@ -148,16 +145,7 @@ public abstract class AbstractChatPlugin extends JavaPlugin {
         getLogger().info("Platform: " + settings.vendorCode() + " (" + settings.model() + ")");
         getLogger().info("Backend: " + backend.describe());
         getLogger().info("Players may chat: " + settings.playerAllowed());
-
-        switch (service.tokenState()) {
-            case "READY" -> getLogger().info("Tokens: ready.");
-            case "NOT_SET" -> getLogger().warning("Tokens: MCAgents core has no token for "
-                    + settings.vendorCode() + ". Add one to plugins/MCAgents/config.yml, "
-                    + "then run /mcagents reload.");
-            case "EXPIRED" -> getLogger().warning("Tokens: every token MCAgents core had for "
-                    + settings.vendorCode() + " was rejected and removed.");
-            default -> getLogger().warning("Tokens: could not read the credential state from MCAgents core.");
-        }
+        getLogger().info("API tokens are managed by MCAgents core: /agents");
     }
 
     /**

@@ -111,13 +111,13 @@ public final class ChatCommand implements CommandExecutor, TabCompleter {
         }
 
         try {
-            String state = plugin.reloadChat();
+            plugin.reloadChat();
             sender.sendMessage(ChatColor.GREEN + "MCAgents chat reloaded.");
             sender.sendMessage(ChatColor.GRAY + "  platform: " + ChatColor.WHITE
                     + plugin.chatService().settings().vendorCode());
             sender.sendMessage(ChatColor.GRAY + "  backend: " + ChatColor.WHITE
                     + plugin.chatService().settings().model() + " via " + plugin.backendDescription());
-            sender.sendMessage(ChatColor.GRAY + "  tokens: " + ChatColor.WHITE + describe(state));
+            sender.sendMessage(ChatColor.DARK_GRAY + "  API tokens are managed by MCAgents core: /agents");
         } catch (RuntimeException e) {
             // A reload that throws must not take the plugin down with it — the
             // previous settings are still live and still working.
@@ -197,7 +197,10 @@ public final class ChatCommand implements CommandExecutor, TabCompleter {
     /**
      * Turns a failure into one line a player can act on.
      *
-     * <p>Never includes a credential, a stack trace, or a vendor URL.</p>
+     * <p>Never includes a credential, a stack trace, or a vendor URL. A
+     * credential problem reads the same as any other service failure here,
+     * because this plugin holds no credentials and a player could do nothing
+     * about one — core's own message says what is wrong, in the console.</p>
      *
      * @param failure What the request completed with.
      * @return The message to show.
@@ -211,32 +214,11 @@ public final class ChatCommand implements CommandExecutor, TabCompleter {
             return switch (chatFailure.kind()) {
                 case BACKEND_UNAVAILABLE ->
                         "AI chat is unavailable — the MCAgents core plugin is missing or incompatible.";
-                case NO_TOKEN ->
-                        "AI chat has no API token configured. An administrator must add one to config.yml.";
-                case TOKENS_EXPIRED ->
-                        "Every configured API token has been rejected. An administrator must add a working one.";
-                case RATE_LIMITED ->
-                        "The AI service is rate limiting requests. Try again in a moment.";
-                case TOKEN_REJECTED, VENDOR_ERROR ->
+                case VENDOR_ERROR ->
                         "The AI service could not answer that. Try again shortly.";
             };
         }
         return "The AI service could not answer that. Try again shortly.";
-    }
-
-    /**
-     * Describes a credential state for the reload output.
-     *
-     * @param state Core's state name.
-     * @return A short phrase.
-     */
-    private String describe(String state) {
-        return switch (state) {
-            case "READY" -> "ready";
-            case "NOT_SET" -> "not set — add one to plugins/MCAgents/config.yml";
-            case "EXPIRED" -> "expired — every token was rejected and removed";
-            default -> "unknown — MCAgents core did not answer";
-        };
     }
 
     /**

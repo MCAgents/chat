@@ -3,11 +3,18 @@ package io.github.mcagents.chat.api;
 import java.util.concurrent.CompletableFuture;
 
 /**
- * The one thing this project needs from MCAgents core, stated in this
- * project's own types.
+ * The one thing this project needs from MCAgents core: send a prompt, get a
+ * reply.
  *
- * <p>Everything above this interface — sessions, token pooling, commands —
- * works against it and never against a core class. The single implementation
+ * <p><strong>There is deliberately no credential method here.</strong> MCAgents
+ * core owns the token file, loads it automatically, rotates on a rate limit, and
+ * evicts on a rejection — none of which this project can see, set, or trigger.
+ * A consumer sends a prompt and gets an answer or a failure; that is the entire
+ * surface, and it is why nothing in this repository has to be trusted with a
+ * key.</p>
+ *
+ * <p>Everything above this interface — sessions, commands — works against it and
+ * never against a core class. The single implementation
  * that knows core exists is the reflective bridge in a platform module, which
  * means the reflection lives in exactly one place, can be swapped without
  * touching anything else, and fails where it can be reported cleanly.</p>
@@ -32,33 +39,6 @@ public interface AgentBackend {
      * @return {@code true} when a request would reach core.
      */
     boolean isAvailable();
-
-    /**
-     * Reports whether a vendor has a usable credential, and if not, why not.
-     *
-     * <p>This project holds no credentials. MCAgents core owns the token file,
-     * the rotation, and the eviction; all this asks is what core currently
-     * knows, so a command can tell a server owner to add a key or to find out
-     * why their keys stopped working.</p>
-     *
-     * @param vendorCode The vendor to ask about, as core names it.
-     * @return {@code "READY"}, {@code "NOT_SET"}, or {@code "EXPIRED"} — core's
-     *         own state names, passed through as text because this module does
-     *         not compile against core's enum. Any other value means the state
-     *         could not be read.
-     */
-    String tokenState(String vendorCode);
-
-    /**
-     * Asks core to re-read its credential file.
-     *
-     * <p>Backs the reload command. The credentials themselves are core's, so
-     * this is a request rather than an update — nothing here holds a token to
-     * replace.</p>
-     *
-     * @return {@code true} when core reloaded.
-     */
-    boolean reloadTokens();
 
     /**
      * Sends one exchange and returns the model's reply.

@@ -55,11 +55,6 @@ public final class MCAgentsBridge implements AgentBackend {
     private static final String REQUEST_CLASS = "io.github.mcagents.core.api.chat.ChatRequest";
 
     /**
-     * Core's failure type, read to tell a dead credential from a rate limit.
-     */
-    private static final String EXCEPTION_CLASS = "io.github.mcagents.core.api.AgentException";
-
-    /**
      * This plugin's logger, used for the one-shot failure reports.
      */
     private final Logger logger;
@@ -74,16 +69,6 @@ public final class MCAgentsBridge implements AgentBackend {
      * to core's enum constant.
      */
     private final Method vendorFromCode;
-
-    /**
-     * {@code MCAgentsProvider.tokenState(LlmVendor)}.
-     */
-    private final Method tokenState;
-
-    /**
-     * {@code MCAgentsProvider.reloadTokens()}.
-     */
-    private final Method reloadTokens;
 
     /**
      * {@code MCAgentsProvider.chat(LlmVendor, ChatRequest)}.
@@ -118,13 +103,6 @@ public final class MCAgentsBridge implements AgentBackend {
     private final Method usageCompletionTokens;
 
     /**
-     * {@code AgentException} accessors, used to classify a failure.
-     */
-    private final Class<?> exceptionClass;
-    private final Method exceptionIsAuthFailure;
-    private final Method exceptionIsRateLimited;
-
-    /**
      * Whether a send failure has already been logged with its stack trace, so a
      * persistent problem does not flood the console on every message.
      */
@@ -143,8 +121,6 @@ public final class MCAgentsBridge implements AgentBackend {
         this.logger = logger;
         this.provider = handles.provider;
         this.vendorFromCode = handles.vendorFromCode;
-        this.tokenState = handles.tokenState;
-        this.reloadTokens = handles.reloadTokens;
         this.chat = handles.chat;
         this.requestBuilder = handles.requestBuilder;
         this.builderSystem = handles.builderSystem;
@@ -157,9 +133,6 @@ public final class MCAgentsBridge implements AgentBackend {
         this.responseUsage = handles.responseUsage;
         this.usagePromptTokens = handles.usagePromptTokens;
         this.usageCompletionTokens = handles.usageCompletionTokens;
-        this.exceptionClass = handles.exceptionClass;
-        this.exceptionIsAuthFailure = handles.exceptionIsAuthFailure;
-        this.exceptionIsRateLimited = handles.exceptionIsRateLimited;
     }
 
     /**
@@ -187,12 +160,9 @@ public final class MCAgentsBridge implements AgentBackend {
             Class<?> builderClass = Class.forName(REQUEST_CLASS + "$Builder", false, loader);
             Class<?> responseClass = Class.forName("io.github.mcagents.core.api.chat.ChatResponse", false, loader);
             Class<?> usageClass = Class.forName("io.github.mcagents.core.api.chat.TokenUsage", false, loader);
-            Class<?> exceptionClass = Class.forName(EXCEPTION_CLASS, false, loader);
 
             Handles handles = new Handles();
             handles.vendorFromCode = vendorClass.getMethod("fromCode", String.class);
-            handles.tokenState = providerClass.getMethod("tokenState", vendorClass);
-            handles.reloadTokens = providerClass.getMethod("reloadTokens");
             handles.chat = providerClass.getMethod("chat", vendorClass, requestClass);
             handles.requestBuilder = requestClass.getMethod("builder", String.class);
             handles.builderSystem = builderClass.getMethod("system", String.class);
@@ -205,9 +175,6 @@ public final class MCAgentsBridge implements AgentBackend {
             handles.responseUsage = responseClass.getMethod("usage");
             handles.usagePromptTokens = usageClass.getMethod("promptTokens");
             handles.usageCompletionTokens = usageClass.getMethod("completionTokens");
-            handles.exceptionClass = exceptionClass;
-            handles.exceptionIsAuthFailure = exceptionClass.getMethod("isAuthFailure");
-            handles.exceptionIsRateLimited = exceptionClass.getMethod("isRateLimited");
 
             // The provider is the core plugin's own singleton, created when that
             // plugin enabled. Creating a second one here would give this plugin
@@ -238,43 +205,6 @@ public final class MCAgentsBridge implements AgentBackend {
     @Override
     public boolean isAvailable() {
         return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>Reads core's own {@code TokenState} enum and passes back its constant
-     * name. This plugin holds no credentials, so there is nothing here to set —
-     * only something to ask.</p>
-     */
-    @Override
-    public String tokenState(String vendorCode) {
-        try {
-            Object vendor = vendorFromCode.invoke(null, vendorCode);
-            Object state = tokenState.invoke(provider, vendor);
-            return state instanceof Enum<?> constant ? constant.name() : "UNKNOWN";
-        } catch (ReflectiveOperationException | RuntimeException e) {
-            logSendFailureOnce(e);
-            return "UNKNOWN";
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>Asks core to re-read its own credential file. The file is core's, so
-     * this plugin cannot and does not touch it.</p>
-     */
-    @Override
-    public boolean reloadTokens() {
-        try {
-            reloadTokens.invoke(provider);
-            return true;
-        } catch (ReflectiveOperationException | RuntimeException e) {
-            logger.warning("MCAgents core could not reload its credentials ("
-                    + e.getClass().getSimpleName() + ").");
-            return false;
-        }
     }
 
     /**
@@ -376,11 +306,11 @@ public final class MCAgentsBridge implements AgentBackend {
     }
 
     /**
-     * Classifies a core failure into the kinds the rotation logic branches on.
+     * Normalizes a core failure into this project's exception type.
      *
-     * <p>This is the whole reason the bridge reads core's exception type: a
-     * rejected credential must be evicted and a rate limited one must not, and
-     * only core knows which happened.</p>
+     * <p>Every remote failure becomes the same kind. This project cannot tell a
+     * revoked key from a busy one and has no reason to — it holds no
+     * credentials, so there is nothing it would do differently.</p>
      *
      * @param failure Whatever core's future completed with.
      * @return The equivalent {@link ChatException}.
@@ -395,22 +325,10 @@ public final class MCAgentsBridge implements AgentBackend {
 
         String message = cause.getMessage() == null ? cause.getClass().getSimpleName() : cause.getMessage();
 
-        if (exceptionClass.isInstance(cause)) {
-            try {
-                if ((boolean) exceptionIsAuthFailure.invoke(cause)) {
-                    return new ChatException(ChatException.Kind.TOKEN_REJECTED, message, cause);
-                }
-                if ((boolean) exceptionIsRateLimited.invoke(cause)) {
-                    return new ChatException(ChatException.Kind.RATE_LIMITED, message, cause);
-                }
-            } catch (ReflectiveOperationException | RuntimeException e) {
-                // Could not classify it. Fall through to VENDOR_ERROR, which
-                // evicts nothing — the safe default when the cause is unclear.
-                logSendFailureOnce(e);
-            }
-            return new ChatException(ChatException.Kind.VENDOR_ERROR, message, cause);
-        }
-
+        // Core's own failure types are not unpacked any further. Whether the
+        // credential was rejected, rate limited, or absent is core's business —
+        // it is the only thing holding one, and it is the only thing that can
+        // act. Core's message carries the detail into the console.
         logSendFailureOnce(cause);
         return new ChatException(ChatException.Kind.VENDOR_ERROR, message, cause);
     }
@@ -440,8 +358,6 @@ public final class MCAgentsBridge implements AgentBackend {
     private static final class Handles {
         private Object provider;
         private Method vendorFromCode;
-        private Method tokenState;
-        private Method reloadTokens;
         private Method chat;
         private Method requestBuilder;
         private Method builderSystem;
@@ -454,8 +370,5 @@ public final class MCAgentsBridge implements AgentBackend {
         private Method responseUsage;
         private Method usagePromptTokens;
         private Method usageCompletionTokens;
-        private Class<?> exceptionClass;
-        private Method exceptionIsAuthFailure;
-        private Method exceptionIsRateLimited;
     }
 }

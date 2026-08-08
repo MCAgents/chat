@@ -32,40 +32,13 @@ public class ChatException extends RuntimeException {
         BACKEND_UNAVAILABLE,
 
         /**
-         * No token is configured for the selected vendor.
-         */
-        NO_TOKEN,
-
-        /**
-         * Every configured token was rejected and evicted. Distinct from
-         * {@link #NO_TOKEN} because the fix is different: one means "add a
-         * key", the other means "your keys stopped working".
-         */
-        TOKENS_EXPIRED,
-
-        /**
-         * The vendor rejected the credential itself — an authentication
-         * failure, or an explicit "this key is invalid or out of credit".
+         * The vendor could not answer.
          *
-         * <p>The one kind that means a credential is dead and should be
-         * evicted. Nothing else does.</p>
-         */
-        TOKEN_REJECTED,
-
-        /**
-         * The vendor rate limited the request.
-         *
-         * <p>Kept separate from {@link #TOKEN_REJECTED} on purpose: the
-         * credential is fine and merely came too fast. Rotating to another is
-         * reasonable; evicting this one destroys something the user paid
-         * for.</p>
-         */
-        RATE_LIMITED,
-
-        /**
-         * The vendor was reached and refused the request for some other
-         * reason, or could not be reached at all. Says nothing about the
-         * credential, so never evict on this.
+         * <p>One kind covers every remote failure, including a missing or
+         * exhausted credential. This project cannot tell those apart and has no
+         * reason to: it holds no credentials, so there is nothing it could do
+         * differently. Core's own message says what actually went wrong and goes
+         * to the console.</p>
          */
         VENDOR_ERROR
     }

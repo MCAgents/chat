@@ -16,22 +16,17 @@ import java.util.concurrent.CompletionException;
 /**
  * The single entry point to this project's chat behavior.
  *
- * <p>A platform module builds one of these with a backend and a token store,
- * then calls {@link #ask(UUID, String)} from its command handler. Everything
+ * <p>A platform module builds one of these with a backend, then calls
+ * {@link #ask(UUID, String)} from its command handler. Everything
  * between — the session, the credential rotation, the prompt shape — happens
  * here, identically on every platform.</p>
  *
  * <h2>No credentials here</h2>
  *
- * <p>This project holds no API tokens. MCAgents core owns the credential file,
- * the pool, the rotation, and the eviction — including the decision that a
- * rejected key is dead while a rate limited one is merely busy. That decision is
- * destructive to get wrong, so it is written once, in core, rather than repeated
- * in every consumer.</p>
- *
- * <p>All this does is ask core what state a vendor's credentials are in, so a
- * command can tell a server owner to add a key or to find out why their keys
- * stopped working.</p>
+ * <p>This project holds no API tokens and cannot see, set, or reload one. Core
+ * owns the file, loads it automatically, rotates on a rate limit, and evicts on
+ * a rejection. A prompt goes out and a reply or a failure comes back — that is
+ * the whole relationship.</p>
  *
  * <h2>Prompt caching</h2>
  *
@@ -87,16 +82,6 @@ public final class ChatService {
      */
     public ChatSettings settings() {
         return settings;
-    }
-
-    /**
-     * Reports whether this vendor can currently be called, and if not, why not.
-     *
-     * @return Core's state name — {@code "READY"}, {@code "NOT_SET"}, or
-     *         {@code "EXPIRED"}.
-     */
-    public String tokenState() {
-        return backend.tokenState(settings.vendorCode());
     }
 
     /**
@@ -169,20 +154,17 @@ public final class ChatService {
      * continuing a conversation half built under the old ones produces replies
      * nobody can explain.</p>
      *
-     * <p>Also asks core to re-read its credential file, so a key the owner just
-     * pasted into core's config becomes usable from this command too.</p>
+     * <p>Credentials are untouched, because none are held here. A key added to
+     * MCAgents core is picked up by core's own reload command.</p>
      *
      * @param updated The settings to adopt. Changing the platform is fine here:
-     *                nothing in this service is bound to a vendor any more.
-     * @return Core's credential state afterwards, so the caller can report it.
+     *                nothing in this service is bound to a vendor.
      */
-    public String reload(ChatSettings updated) {
+    public void reload(ChatSettings updated) {
         Objects.requireNonNull(updated, "updated cannot be null");
 
         this.settings = updated;
         sessions.clearAll();
-        backend.reloadTokens();
-        return backend.tokenState(updated.vendorCode());
     }
 
     /**

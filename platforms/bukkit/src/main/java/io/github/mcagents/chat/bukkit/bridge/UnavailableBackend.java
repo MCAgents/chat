@@ -45,27 +45,6 @@ public final class UnavailableBackend implements AgentBackend {
     /**
      * {@inheritDoc}
      *
-     * <p>Always unknown: with no backend there is nobody to ask about
-     * credentials.</p>
-     */
-    @Override
-    public String tokenState(String vendorCode) {
-        return "UNKNOWN";
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * <p>Always {@code false}: there is nothing to reload.</p>
-     */
-    @Override
-    public boolean reloadTokens() {
-        return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * <p>Always fails, and never reaches a network.</p>
      */
     @Override
