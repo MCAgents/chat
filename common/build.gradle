@@ -1,0 +1,27 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    // The contracts this module implements. Declared compileOnly so the api
+    // classes are never duplicated into a consumer's classpath by this jar —
+    // the engine is the single module that bundles them.
+    compileOnly project(':api')
+}
+
+base {
+    archivesName = "${rootProject.name}-common"
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            pom {
+                name = "${rootProject.name}-${project.name}"
+                description = "MCAgents Chat Common"
+            }
+        }
+    }
+}

@@ -1,0 +1,25 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    // The shared layers are bundled once, by the engine. Every module below
+    // the engine declares them compileOnly so no jar carries a second copy.
+    compileOnly project(':api')
+    compileOnly project(':common')
+
+    // The mod family core, mirroring the role platforms:bukkit plays for the
+    // server side. This module adds only what neoforge itself needs.
+    compileOnly project(':platforms:mods')
+
+    compileOnly libs.gson
+}
+
+// The NeoForge coordinate is not declared yet. Resolving net.neoforged:neoforge
+// requires the ModDevGradle toolchain, which remaps Minecraft as part of the
+// build. It is introduced together with the first real NeoForge entry point
+// rather than being scaffolded ahead of the code that needs it.
+
+base {
+    archivesName = "${rootProject.name}-neoforge"
+}

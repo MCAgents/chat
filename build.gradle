@@ -1,0 +1,72 @@
+allprojects {
+    group = project.property('project-group')
+    version = "${project.property('project-version')}"
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+// MCAgents/core is deliberately NOT a dependency of this build. The platform
+// modules reach it through a reflective bridge against the loaded core plugin's
+// own classloader, resolved at enable time. That keeps this jar buildable
+// without publishing core anywhere, and keeps it from having to be recompiled
+// against every core release.
+
+subprojects {
+    // Skip projects that don't have their own build.gradle file (e.g., the 'platforms' intermediate folder)
+    if (!file('build.gradle').exists()) {
+        return
+    }
+
+    apply plugin: 'java'
+
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(25)
+        }
+    }
+
+    // Only the two pure Java layers are published. The platform modules are
+    // distributed as plugin and mod artifacts, so they carry no publication.
+    if (project.name != 'api' && project.name != 'common') {
+        return
+    }
+
+    apply plugin: 'maven-publish'
+
+    publishing {
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = "https://maven.pkg.github.com/${project.property('git-org-name')}/${project.property('git-repository')}"
+                credentials {
+                    username = System.getenv("GITHUB_ACTOR")
+                    password = System.getenv("GITHUB_TOKEN")
+                }
+            }
+        }
+
+        publications.withType(MavenPublication) {
+            // Qualify the coordinates with the root project name. Without this
+            // the artifactId defaults to the bare module name, so this project
+            // would publish a colliding io.github.mcagents:api against core's.
+            artifactId = "${rootProject.name}-${project.name}"
+
+            pom {
+                url = "https://mcagents.github.io/website"
+                developers {
+                    developer {
+                        id = "jetsadawijit"
+                        name = "jetsadawijit"
+                        url = "https://jetsadawijit.github.io"
+                    }
+                }
+            }
+        }
+    }
+}
+
+tasks.register('clean', Delete) {
+    delete rootProject.layout.buildDirectory
+}

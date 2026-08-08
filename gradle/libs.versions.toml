@@ -1,0 +1,25 @@
+# https://docs.gradle.org/current/userguide/version_catalogs.html#sec::toml-dependencies-format
+#
+# Every platform API coordinate the build compiles against lives here, so a
+# version bump is a one line change in a single file.
+#
+# MCAgents/core is absent on purpose. It is reached through a reflective bridge
+# at runtime, not compiled against — see the note in the root build.gradle.
+
+[versions]
+# JSON codec for the shared mod side credential file. Provided by every target
+# platform at runtime, so it is only ever a compileOnly dependency.
+gson = "2.14.0"
+# Latest published SpigotMC snapshot. Bukkit and Spigot types come from here.
+spigot-api = "26.2-R0.1-SNAPSHOT"
+# Latest published PaperMC build. A superset of the Spigot API.
+paper-api = "26.2.build.111-stable"
+# Latest published Folia build. A superset of the Paper API, with the
+# regionised schedulers replacing the single main thread.
+folia-api = "26.2.build.1-beta"
+
+[libraries]
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+spigot-api = { module = "org.spigotmc:spigot-api", version.ref = "spigot-api" }
+paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper-api" }
+folia-api = { module = "dev.folia:folia-api", version.ref = "folia-api" }

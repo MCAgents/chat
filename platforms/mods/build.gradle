@@ -1,0 +1,25 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    // The shared layers are bundled once, by the engine. Every module below
+    // the engine declares them compileOnly so no jar carries a second copy.
+    compileOnly project(':api')
+    compileOnly project(':common')
+
+    // JSON codec for the shared credential file under the Minecraft directory.
+    // compileOnly because Minecraft itself puts Gson on the classpath for both
+    // loaders, so shading a second copy would be waste.
+    compileOnly libs.gson
+}
+
+// No mod loader coordinate is declared here. This module is the loader
+// agnostic half of the mod side — the part that holds only plain Java. The
+// loader toolchains (ModDevGradle for NeoForge, Loom for Fabric) are
+// introduced by the modules that actually need them, in the change that adds
+// real loader code.
+
+base {
+    archivesName = "${rootProject.name}-mods"
+}
