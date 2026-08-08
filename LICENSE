@@ -1,0 +1,147 @@
+MCAgents Commercial License
+
+Copyright (c) 2026 MCAgents. All rights reserved.
+
+This software and its source code, documentation, configuration, and assets
+(together, the "Software") are proprietary and confidential. They are licensed,
+never sold. No ownership passes to you under this License, and every right not
+expressly granted below is reserved by MCAgents.
+
+By downloading, installing, running, or otherwise using the Software you accept
+this License. If you do not accept it, you may not use the Software.
+
+
+1. WHO MAY USE THE SOFTWARE
+
+Only the following three categories of user are permitted. If you do not fall
+into one of them, you have no license to the Software.
+
+  1) Owners and members of the MCAgents organization.
+
+     Any person holding membership in the MCAgents GitHub organization, for as
+     long as that membership lasts. Permission ends when membership ends.
+
+  2) Users or organizations expressly granted permission by MCAgents.
+
+     A person or organization to whom MCAgents has granted permission in
+     writing. The grant covers only what it states, applies only to the named
+     grantee, and may be withdrawn by MCAgents at any time. Permission that is
+     not in writing is not permission.
+
+  3) Buyers who have purchased a license.
+
+     A person or organization holding a valid, paid license from MCAgents, under
+     one of the three terms below. Which term applies is fixed by the purchase
+     itself.
+
+        a) One-time, limited duration.
+           A single purchase granting use for a stated period. Rights end when
+           that period ends, whether or not the Software is still installed.
+
+        b) Subscription.
+           Recurring payment granting use for as long as the subscription is
+           current. Rights end on lapse, cancellation, or non-payment, and
+           resume only on renewal.
+
+        c) One-time, perpetual.
+           A single purchase granting use with no end date, for the version
+           purchased and any release MCAgents states the purchase covers.
+           Perpetual means unending in time; it does not widen any other term of
+           this License.
+
+     A perpetual license is still a license. Sections 2 and 3 apply to it in
+     full, exactly as they apply to the other two terms.
+
+
+2. WHAT YOU MAY DO
+
+Subject to Section 1 and to your continued compliance with this License, you may
+install and run the Software for its intended purpose, and configure it for your
+own use.
+
+You may make backup copies for your own internal use only, provided every copy
+carries this License and every copyright notice unchanged.
+
+
+3. WHAT YOU MAY NOT DO
+
+You may not, in whole or in part, directly or through anyone acting for you:
+
+  a) Copy the Software, except for the backup copies permitted in Section 2.
+
+  b) Sell, resell, sublicense, rent, lease, lend, or otherwise commercialize the
+     Software or any access to it.
+
+  c) Claim the Software as your own, remove or alter any copyright, license, or
+     attribution notice, or present the Software or any derivative of it as your
+     own work or as another party's.
+
+  d) Reverse engineer, decompile, disassemble, deobfuscate, or otherwise attempt
+     to derive the source code, structure, or internal design of the Software,
+     except to the exact extent that applicable law forbids this restriction.
+
+  e) Send, publish, share, transfer, distribute, mirror, or otherwise make the
+     Software available to any third party, including any person or organization
+     that does not itself hold a license under Section 1. This applies equally to
+     public and private channels.
+
+  f) Modify the Software or create derivative works from it, other than the
+     configuration expressly permitted in Section 2.
+
+  g) Transfer or assign your rights under this License to anyone else without the
+     prior written consent of MCAgents.
+
+  h) Use the Software to build, train, or improve a product that competes with
+     it.
+
+
+4. THIRD PARTY SERVICES AND CREDENTIALS
+
+The Software can be configured to call third party services. Those services are
+governed by their own terms and are billed by their own providers. MCAgents is
+not a party to that relationship and is not responsible for it.
+
+Any API key, token, or credential you configure remains yours, and securing it
+remains your responsibility.
+
+
+5. TERMINATION
+
+This License ends automatically, without notice, the moment you breach any part
+of it. It also ends when the basis of your permission under Section 1 ends —
+when organization membership ends, when a written grant is withdrawn, or when a
+purchased term expires or lapses.
+
+On termination you must stop using the Software and destroy every copy in your
+possession, including backups. Sections 3, 6, 7, and 8 survive termination.
+
+
+6. NO WARRANTY
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE, TITLE, AND NONINFRINGEMENT. MCAGENTS DOES NOT WARRANT
+THAT THE SOFTWARE WILL BE UNINTERRUPTED, ERROR FREE, OR FIT FOR YOUR PURPOSE.
+
+
+7. LIMITATION OF LIABILITY
+
+IN NO EVENT SHALL MCAGENTS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN
+CONNECTION WITH THE SOFTWARE OR ITS USE. THIS INCLUDES, WITHOUT LIMITATION, ANY
+INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, ANY LOSS OF
+PROFITS, DATA, OR GOODWILL, AND ANY COST BILLED BY A THIRD PARTY SERVICE THE
+SOFTWARE WAS CONFIGURED TO CALL.
+
+
+8. GENERAL
+
+This License is the entire agreement between you and MCAgents regarding the
+Software, and supersedes any earlier understanding about it.
+
+MCAgents' failure to enforce any provision is not a waiver of that provision. If
+any provision is held unenforceable, the rest remains in force and the
+unenforceable provision is limited to the minimum extent necessary.
+
+For licensing enquiries, written permission under Section 1(2), or purchase under
+Section 1(3), contact the MCAgents organization.
