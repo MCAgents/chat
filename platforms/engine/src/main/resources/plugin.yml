@@ -1,0 +1,29 @@
+name: MCAgentsChat
+version: '${version}'
+main: io.github.mcagents.chat.engine.MCAgentsChatEnginePlugin
+api-version: '1.21'
+description: In-game AI chat for MCAgents. One jar for SpigotMC, PaperMC, and Folia.
+authors: [jetsadawijit]
+website: https://mcagents.github.io/website
+
+# The bridge resolves MCAgents core's API through that plugin's own
+# classloader. This declaration is what guarantees core loads first and makes
+# its classes reachable; without it the bridge cannot resolve.
+depend: [MCAgents]
+
+# The regionised scheduler is installed at enable time when Folia is detected,
+# so this claim is backed by the code rather than merely asserted.
+folia-supported: true
+
+commands:
+  chat:
+    description: Ask the AI a question, or manage the chat plugin.
+    usage: /chat <message> | /chat clear | /chat reload
+
+permissions:
+  mcagents.chat.use:
+    description: Allows a player to use /chat. Only takes effect when player_allow is true in config.yml.
+    default: false
+  mcagents.chat.reload:
+    description: Allows running /chat reload, which re-reads config.yml and drops every conversation.
+    default: op

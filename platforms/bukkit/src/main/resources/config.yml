@@ -1,0 +1,120 @@
+# =====================================================================
+#  MCAgents Chat
+# =====================================================================
+#  Requires the MCAgents core plugin installed alongside this one. Core
+#  does the talking to the AI service; this plugin is the chat surface.
+#
+#  After editing this file, run:  /chat reload
+#  There is no need to restart the server or rejoin.
+# =====================================================================
+
+
+# ---------------------------------------------------------------------
+#  Which AI service to use.
+#
+#  Exactly one platform is active at a time. Put your key(s) in the
+#  matching section below — the other sections are ignored.
+#
+#  Supported values:
+#    openrouter  - one key, many providers. Get a key at openrouter.ai
+#    openai      - platform.openai.com
+#    deepseek    - platform.deepseek.com
+#    anthropic   - console.anthropic.com
+#
+#  The model is fixed in code for each platform and is not configurable.
+#  A mistyped model produces an error that looks exactly like a bad key,
+#  which is miserable to diagnose from a server log.
+# ---------------------------------------------------------------------
+platform: "openrouter"
+
+
+# ---------------------------------------------------------------------
+#  Who may use /chat.
+#
+#  false (default) - operators only. Ordinary players cannot use it even
+#                    if they have the mcagents.chat.use permission.
+#  true            - any player holding mcagents.chat.use may use it.
+#
+#  This is a spending control before it is a permission: every message
+#  costs YOU money at your AI provider. Turn it on deliberately.
+# ---------------------------------------------------------------------
+player_allow: false
+
+
+# ---------------------------------------------------------------------
+#  API tokens.
+#
+#  Each platform takes a LIST of tokens. Supplying more than one is
+#  useful for two reasons:
+#
+#    * When the service rate limits one key, the plugin moves to the
+#      next and keeps the busy one.
+#    * When the service REJECTS a key — expired, revoked, out of credit
+#      — the plugin moves to the next AND DELETES the dead key from this
+#      file, so it is not retried forever.
+#
+#  Only a rejection deletes a key. A rate limit, a timeout, or a service
+#  outage never does.
+#
+#  Keep this file private. Anyone who can read it can spend your credit.
+# ---------------------------------------------------------------------
+
+openrouter:
+  token:
+    - "your_openrouter_token"
+
+openai:
+  token:
+    - "your_openai_token"
+
+deepseek:
+  token:
+    - "your_deepseek_token"
+
+anthropic:
+  token:
+    - "your_anthropic_token"
+
+
+# ---------------------------------------------------------------------
+#  The instructions sent with every message.
+#
+#  Kept short on purpose: it is prepended to EVERY request, so every
+#  word here is paid for on every message by every player.
+#
+#  Keeping it stable between messages also matters for cost. Every
+#  provider caches a repeated prompt prefix and charges less for it, so
+#  changing this line frequently means paying full price every time.
+# ---------------------------------------------------------------------
+system_prompt: "You are a helpful assistant inside a Minecraft server. Answer briefly - a few sentences at most, in plain text with no markdown."
+
+
+# ---------------------------------------------------------------------
+#  The most tokens a single reply may generate.
+#
+#  -1 leaves the limit to the platform. Set a number to cap the cost of
+#  any one reply.
+# ---------------------------------------------------------------------
+max_tokens: -1
+
+
+# ---------------------------------------------------------------------
+#  Conversation memory.
+#
+#  Each player has their own running conversation, held in memory only —
+#  nothing is written to a database, and everything is forgotten when
+#  the server stops.
+#
+#  max_turns             How many messages a conversation remembers. The
+#                        whole conversation is resent on every message,
+#                        so a bigger number means a longer, more
+#                        expensive prompt. Minimum 2.
+#
+#  idle_timeout_minutes  How long a player can be silent before their
+#                        conversation is forgotten. Minimum 1.
+#
+#  A player can also run /chat clear to start over.
+# ---------------------------------------------------------------------
+session:
+  max_turns: 20
+  idle_timeout_minutes: 30
