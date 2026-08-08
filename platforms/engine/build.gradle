@@ -1,0 +1,66 @@
+plugins {
+    id 'com.gradleup.shadow' version '9.4.1'
+}
+
+repositories {
+    maven {
+        name = "papermc-repo"
+        url = "https://repo.papermc.io/repository/maven-public/"
+    }
+    maven {
+        name = "spigotmc-repo"
+        url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
+    }
+    maven {
+        name = "sonatype"
+        url = "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+}
+
+dependencies {
+    // The engine is the one module that implements everything. Every other
+    // module declares the shared layers compileOnly precisely so that this is
+    // the single place they are bundled, and the shaded jar carries exactly
+    // one copy of each class.
+    implementation project(':api')
+    implementation project(':common')
+
+    implementation project(':platforms:bukkit')
+    implementation project(':platforms:spigotmc')
+    implementation project(':platforms:papermc')
+    implementation project(':platforms:foliamc')
+
+    implementation project(':platforms:mods')
+    implementation project(':platforms:neoforge')
+    implementation project(':platforms:fabric')
+
+    // Compile against the Folia API only. Folia is a superset of the Paper and
+    // Spigot APIs — it declares their `org.spigotmc:spigot-api` capability — so
+    // it provides every Bukkit, Paper, and Folia type the bundled modules
+    // reference. Declaring all three at once is impossible: they each provide
+    // that same capability and Gradle rejects them as a mutually exclusive
+    // conflict. Which platform is running is resolved at runtime, so no
+    // compile time Paper or Spigot dependency is required.
+    compileOnly libs.folia.api
+
+    // Provided by the server and by Minecraft; never shaded.
+    compileOnly libs.gson
+}
+
+jar {
+    enabled = false
+}
+
+shadowJar {
+    archiveClassifier.set('')
+    mergeServiceFiles()
+
+    // Ensure all implementation dependencies are shadowed
+    configurations = [project.configurations.runtimeClasspath]
+}
+
+base {
+    archivesName = "MCAgentsChat"
+}
+
+build.dependsOn shadowJar

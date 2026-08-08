@@ -1,0 +1,33 @@
+plugins {
+    id 'java-library'
+}
+
+repositories {
+    maven {
+        name = "spigotmc-repo"
+        url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
+    }
+    maven {
+        name = "sonatype"
+        url = "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+}
+
+dependencies {
+    // The shared layers are bundled once, by the engine. Every module below
+    // the engine declares them compileOnly so no jar carries a second copy.
+    compileOnly project(':api')
+    compileOnly project(':common')
+
+    // The lowest platform that provides what the Bukkit family needs. Code
+    // written against it runs on SpigotMC, PaperMC, and Folia alike.
+    compileOnly libs.spigot.api
+}
+
+// MCAgents/core is not on this classpath by design. The bridge in
+// io.github.mcagents.chat.bukkit.bridge resolves it reflectively against the
+// loaded core plugin, so this module never compiles against a core type.
+
+base {
+    archivesName = "${rootProject.name}-bukkit"
+}

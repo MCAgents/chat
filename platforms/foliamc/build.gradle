@@ -1,0 +1,30 @@
+plugins {
+    id 'java-library'
+}
+
+repositories {
+    maven {
+        name = "papermc-repo"
+        url = "https://repo.papermc.io/repository/maven-public/"
+    }
+}
+
+dependencies {
+    // The shared layers are bundled once, by the engine. Every module below
+    // the engine declares them compileOnly so no jar carries a second copy.
+    compileOnly project(':api')
+    compileOnly project(':common')
+
+    // The Bukkit family core. This module adds only what its own server needs
+    // on top of it.
+    compileOnly project(':platforms:bukkit')
+
+    // Folia is a superset of the Paper API. It replaces the single main
+    // thread with regionised multithreading, so code here must never assume
+    // a primary thread or reach for the legacy BukkitScheduler.
+    compileOnly libs.folia.api
+}
+
+base {
+    archivesName = "${rootProject.name}-foliamc"
+}
