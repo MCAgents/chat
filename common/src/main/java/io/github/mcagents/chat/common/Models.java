@@ -3,13 +3,16 @@ package io.github.mcagents.chat.common;
 import java.util.Map;
 
 /**
- * The model each vendor is asked for.
+ * The model each platform falls back to when configuration names none.
  *
- * <p>Fixed in code, deliberately, and not exposed in configuration. A model
- * identifier is not a preference — a wrong one produces a vendor rejection that
- * looks exactly like a bad credential, and diagnosing that from a server log is
- * miserable. Changing a model is a release of this project, where it can be
- * tested.</p>
+ * <p>These are defaults, not the whole story: {@code model} in {@code config.yml}
+ * overrides them. They exist so a server owner who never touches that key still
+ * gets something sensible for the platform they picked, and so a blank value has
+ * an obvious meaning rather than being an error.</p>
+ *
+ * <p>A model identifier is easy to get subtly wrong, and a wrong one produces a
+ * vendor rejection that looks exactly like a bad credential. That is why
+ * {@link #looksMismatched(String, String)} exists — see its documentation.</p>
  *
  * <p>The vendor codes match the ones MCAgents core uses, since they travel
  * across the bridge unchanged.</p>
@@ -24,7 +27,7 @@ public final class Models {
      * their own bare names.</p>
      */
     private static final Map<String, String> BY_VENDOR = Map.of(
-            "openrouter", "openai/gpt-4o-mini",
+            "openrouter", "~deepseek/deepseek-v4-flash-latest",
             "openai", "gpt-4o-mini",
             "deepseek", "deepseek-chat",
             "anthropic", "claude-haiku-4-5-20251001");
@@ -36,12 +39,42 @@ public final class Models {
     }
 
     /**
-     * Returns the model configured for a vendor.
+     * Reports whether a model identifier obviously does not belong to a
+     * platform.
+     *
+     * <p>OpenRouter namespaces every model — {@code ~deepseek/deepseek-v4-flash-latest},
+     * {@code openai/gpt-4o-mini} — while the three direct vendors use bare
+     * names. So a slug carrying a {@code ~} or a {@code /} sent straight to
+     * OpenAI, DeepSeek, or Anthropic will be rejected as unknown, and a bare
+     * name sent to OpenRouter usually will too.</p>
+     *
+     * <p>This is a warning and never a refusal. Vendors add naming conventions
+     * without asking, and refusing to start over a slug this code has not heard
+     * of would be worse than the mistake it prevents. It exists because that
+     * rejection arrives looking exactly like a bad API key, and a server owner
+     * can lose an afternoon to it.</p>
+     *
+     * @param vendorCode The platform the model will be sent to.
+     * @param model The model identifier.
+     * @return {@code true} when the two obviously disagree.
+     */
+    public static boolean looksMismatched(String vendorCode, String model) {
+        if (vendorCode == null || model == null || model.isBlank()) {
+            return false;
+        }
+
+        boolean namespaced = model.startsWith("~") || model.contains("/");
+        boolean openRouter = "openrouter".equalsIgnoreCase(vendorCode.trim());
+        return openRouter != namespaced;
+    }
+
+    /**
+     * Returns the model a vendor falls back to when configuration names none.
      *
      * @param vendorCode The vendor code, matched without regard to case or
      *                   surrounding whitespace.
-     * @return The model identifier.
-     * @throws IllegalArgumentException When no model is configured for that
+     * @return The default model identifier.
+     * @throws IllegalArgumentException When no default is recorded for that
      *                                  vendor, which means the vendor code is
      *                                  wrong or this table was not updated
      *                                  when a vendor was added.
@@ -50,7 +83,7 @@ public final class Models {
         String normalized = vendorCode == null ? "" : vendorCode.trim().toLowerCase(java.util.Locale.ROOT);
         String model = BY_VENDOR.get(normalized);
         if (model == null) {
-            throw new IllegalArgumentException("No model is configured for vendor: " + vendorCode
+            throw new IllegalArgumentException("No default model is recorded for vendor: " + vendorCode
                     + ". Known vendors: " + BY_VENDOR.keySet());
         }
         return model;

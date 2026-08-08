@@ -24,11 +24,32 @@
 #    deepseek    - platform.deepseek.com
 #    anthropic   - console.anthropic.com
 #
-#  The model is fixed in code for each platform and is not configurable.
-#  A mistyped model produces an error that looks exactly like a bad key,
-#  which is miserable to diagnose from a server log.
 # ---------------------------------------------------------------------
 platform: "openrouter"
+
+
+# ---------------------------------------------------------------------
+#  Which model to use.
+#
+#  Must belong to the platform above. The naming differs:
+#
+#    openrouter  namespaced, e.g. ~deepseek/deepseek-v4-flash-latest
+#                                 openai/gpt-4o-mini
+#    openai      bare, e.g. gpt-4o-mini
+#    deepseek    bare, e.g. deepseek-chat
+#    anthropic   bare, e.g. claude-haiku-4-5-20251001
+#
+#  A model that does not belong to the platform is rejected in a way
+#  that reads exactly like a bad API key. The plugin warns in the
+#  console when the two obviously disagree, but it cannot check that a
+#  slug really exists — so copy it from the provider's own page.
+#
+#  Leave this blank to use the platform's default.
+#
+#  The default below always points at the newest DeepSeek V4 Flash
+#  release, so it follows the family without needing an edit here.
+# ---------------------------------------------------------------------
+model: "~deepseek/deepseek-v4-flash-latest"
 
 
 # ---------------------------------------------------------------------

@@ -41,6 +41,24 @@ public final class ChatConfig {
             normalized = "openrouter";
         }
 
+        String model = config.getString("model", "");
+        if (model == null || model.isBlank()) {
+            model = Models.forVendor(normalized);
+            logger.info("config.yml sets no model, so " + normalized + " will use " + model + ".");
+        } else {
+            model = model.trim();
+        }
+
+        // A wrong model is rejected by the vendor in a way that reads exactly
+        // like a bad API key, so say something now rather than let the owner
+        // hunt for a credential problem that does not exist.
+        if (Models.looksMismatched(normalized, model)) {
+            logger.warning("config.yml sets platform: \"" + normalized + "\" with model: \"" + model
+                    + "\", which look mismatched. OpenRouter models are namespaced "
+                    + "(~deepseek/deepseek-v4-flash-latest); openai, deepseek, and anthropic take bare names "
+                    + "(gpt-4o-mini). Using it anyway — if every request fails, this is why.");
+        }
+
         boolean playerAllowed = config.getBoolean("player_allow", false);
 
         String systemPrompt = config.getString("system_prompt", ChatSettings.DEFAULT_SYSTEM_PROMPT);
@@ -69,7 +87,7 @@ public final class ChatConfig {
             maxTokens = io.github.mcagents.chat.api.AgentPrompt.NO_MAX_TOKENS;
         }
 
-        return new ChatSettings(normalized, playerAllowed, systemPrompt, maxTurns,
+        return new ChatSettings(normalized, model, playerAllowed, systemPrompt, maxTurns,
                 Duration.ofMinutes(idleMinutes), maxTokens);
     }
 }
