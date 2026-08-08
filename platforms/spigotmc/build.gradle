@@ -26,6 +26,15 @@ dependencies {
     compileOnly libs.spigot.api
 }
 
+processResources {
+    def props = [version: project.version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}
+
 base {
     archivesName = "${rootProject.name}-spigotmc"
 }

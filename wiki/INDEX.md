@@ -19,6 +19,12 @@ Any page added to or removed from `wiki/` is reflected here **in the same commit
 | [`information/modules.md`](information/modules.md) | The ten build modules, why core is not a build dependency, and what is published. |
 | [`information/licensing.md`](information/licensing.md) | Who is allowed to use the software, and under which purchase terms. |
 
+## Guides
+
+| File | Purpose |
+|---|---|
+| [`guides/server-setup.md`](guides/server-setup.md) | Installing and configuring the plugin: platform, tokens, permissions, and the reload command. |
+
 ## Environments
 
 | File | Purpose |

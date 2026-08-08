@@ -51,12 +51,34 @@ jar {
     enabled = false
 }
 
+// Captured at configuration time so the exclusion rule below stays
+// configuration-cache friendly (it closes over a plain String, not the project).
+def ownResourcesDir = sourceSets.main.output.resourcesDir.absolutePath
+
 shadowJar {
     archiveClassifier.set('')
     mergeServiceFiles()
 
     // Ensure all implementation dependencies are shadowed
     configurations = [project.configurations.runtimeClasspath]
+
+    // Each bundled platform module ships its own plugin.yml. Keep only the
+    // engine's, so the universal jar carries a single, authoritative manifest
+    // rather than whichever copy happened to be extracted last.
+    filesMatching('plugin.yml') {
+        if (!it.file.absolutePath.startsWith(ownResourcesDir)) {
+            it.exclude()
+        }
+    }
+}
+
+processResources {
+    def props = [version: project.version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
 }
 
 base {
