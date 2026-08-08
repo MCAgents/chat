@@ -38,6 +38,18 @@ import java.util.concurrent.CompletionException;
  * between requests. {@link AgentReply#cachedTokens()} reports what the vendor
  * actually served from cache.</p>
  *
+ * <h2>One request at a time</h2>
+ *
+ * <p>A player may have only one request in flight. A second message sent while
+ * the first is still being answered is refused rather than queued — each costs
+ * the server owner money, the replies would arrive out of order, and both would
+ * be built from the same history, so the second would be answered as though the
+ * first had never been asked.</p>
+ *
+ * <p>The claim is released when the request completes, whatever the outcome.
+ * Nothing here times it out: core bounds every request, so the future always
+ * completes and the release always runs. See {@link PendingRequests}.</p>
+ *
  * <h2>Threading</h2>
  *
  * <p>{@link #ask(UUID, String)} returns immediately and is safe to call from a
@@ -55,6 +67,14 @@ public final class ChatService {
      * Every player's running conversation.
      */
     private final SessionStore sessions;
+
+    /**
+     * Who currently has a request in flight.
+     *
+     * <p>One at a time per player. See {@link PendingRequests} for why this
+     * needs no timer of its own.</p>
+     */
+    private final PendingRequests pending = new PendingRequests();
 
     /**
      * The settings shaping each request. Replaced wholesale on reload, never
@@ -113,11 +133,26 @@ public final class ChatService {
                     "The MCAgents core plugin is not available, so nothing can be asked."));
         }
 
+        if (!pending.tryAcquire(playerUuid)) {
+            // Refused before anything is appended or sent: nothing is billed,
+            // and the conversation is left exactly as the in-flight request
+            // expects to find it.
+            return CompletableFuture.failedFuture(new ChatException(
+                    ChatException.Kind.ALREADY_WAITING,
+                    "A reply is already on its way for this player."));
+        }
+
         ChatSession session = sessions.get(playerUuid);
         session.append(ChatTurn.user(message));
 
         return backend.send(buildPrompt(session))
                 .handle((reply, failure) -> {
+                    // Released on every outcome — reply, failure, or core's
+                    // timeout — because handle runs for all three. Attaching
+                    // this to success alone would strand the player after the
+                    // first error.
+                    pending.release(playerUuid);
+
                     if (failure != null) {
                         throw new CompletionException(asChatException(failure));
                     }
@@ -130,10 +165,17 @@ public final class ChatService {
      * Forgets one player's conversation, so their next message starts fresh.
      *
      * @param playerUuid The player.
+     * <p>Also releases any waiting state, so this doubles as the way out if a
+     * player is ever left waiting on a request that never came back.</p>
+     *
      * @return {@code true} when a conversation existed and has now been
      *         dropped.
      */
     public boolean clearSession(UUID playerUuid) {
+        // Also releases any claim. Not a timeout — an escape hatch, so a player
+        // is never permanently stuck behind a request that somehow never
+        // completed.
+        pending.release(playerUuid);
         return sessions.clear(playerUuid);
     }
 
@@ -144,6 +186,25 @@ public final class ChatService {
      */
     public int liveSessions() {
         return sessions.size();
+    }
+
+    /**
+     * Reports whether a player is waiting on a reply.
+     *
+     * @param playerUuid The player to check.
+     * @return {@code true} when a request is in flight for them.
+     */
+    public boolean isWaiting(UUID playerUuid) {
+        return pending.isWaiting(playerUuid);
+    }
+
+    /**
+     * How many requests are in flight across every player.
+     *
+     * @return The count, for a diagnostic line.
+     */
+    public int waitingCount() {
+        return pending.size();
     }
 
     /**
@@ -165,6 +226,7 @@ public final class ChatService {
 
         this.settings = updated;
         sessions.clearAll();
+        pending.clear();
     }
 
     /**
