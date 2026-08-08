@@ -19,9 +19,11 @@ survives a core release it was never compiled against — see
 
 ## Current state
 
-The repository holds a Gradle multi project build with no feature code in it yet
-— every module exists, compiles, and produces a jar, but carries only its
-`package-info.java`. What exists today is:
+The `api`, `common`, `platforms/bukkit`, and `platforms/mods` modules carry the
+chat surface. The four entry point modules — `spigotmc`, `papermc`, `foliamc`,
+and `engine` — are wired on the server side; `neoforge` and `fabric` are
+scaffolded but hold no loader code yet, since that needs a toolchain the build
+does not have. What exists today is:
 
 | Path | What it is |
 |---|---|

@@ -7,14 +7,24 @@ It does not talk to any vendor itself. [`MCAgents/core`](https://github.com/MCAg
 owns that; this repository owns the experience around it — configuration,
 credential storage, commands, permissions, and conversation state.
 
-The repository is at the scaffold stage: the Gradle build and every module exist,
-but they carry no feature code yet.
+```
+/chat What is the fastest way to find diamonds?
+[AI] Branch mine at Y -59 with a fortune pickaxe, or check deepslate cave walls.
+```
 
 ## What is here today
 
 - A Gradle multi project build on **Java 25**: `api`, `common`, and eight
   `platforms/*` modules, all under `io.github.mcagents.chat`. See
   [`wiki/information/modules.md`](wiki/information/modules.md).
+- `/chat`, `/chat clear`, and `/chat reload` on SpigotMC, PaperMC, and Folia,
+  with permissions and a documented `config.yml`. See
+  [`wiki/guides/server-setup.md`](wiki/guides/server-setup.md).
+- A shared `mcagents.json` credential file for the mod side, so every MCAgents
+  mod reads one set of tokens. See
+  [`wiki/guides/client-setup.md`](wiki/guides/client-setup.md).
+- Token pooling that rotates on a rate limit and evicts only on a rejection, and
+  per-player conversations held in memory with no database.
 - An agent instruction set under `.agents/` — placement rules, git conventions,
   task workflow, token handling, licensing, platform knowledge, and the creator
   agents that maintain the trees.
@@ -45,6 +55,10 @@ Start at [`wiki/INDEX.md`](wiki/INDEX.md).
   graph, why core is not a build dependency, and the published artifacts.
 - [`wiki/information/licensing.md`](wiki/information/licensing.md) — who is
   allowed to use the software, and under which terms.
+- [`wiki/guides/server-setup.md`](wiki/guides/server-setup.md) — installing and
+  configuring the plugin.
+- [`wiki/guides/client-setup.md`](wiki/guides/client-setup.md) — where the mod
+  keeps credentials.
 - [`wiki/environments/setup.md`](wiki/environments/setup.md) — getting a working
   copy and starting a change.
 - [`AGENTS.md`](AGENTS.md) — entry point for agents working in this repository.
