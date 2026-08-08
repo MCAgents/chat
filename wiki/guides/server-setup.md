@@ -33,9 +33,31 @@ platform: "openrouter"
 One of `openrouter`, `openai`, `deepseek`, or `anthropic`. Exactly one is active;
 the other token sections are ignored.
 
-The **model is fixed in code** per platform and is not configurable. A mistyped
-model produces a rejection that looks exactly like a bad key, and telling those
-apart from a server log is miserable.
+### Pick a model
+
+```yaml
+model: "~deepseek/deepseek-v4-flash-latest"
+```
+
+The default always points at the newest DeepSeek V4 Flash release, so it follows
+the family without an edit here.
+
+The model must belong to the platform above, and the naming differs:
+
+| Platform | Shape | Example |
+|---|---|---|
+| `openrouter` | namespaced | `~deepseek/deepseek-v4-flash-latest`, `openai/gpt-4o-mini` |
+| `openai` | bare | `gpt-4o-mini` |
+| `deepseek` | bare | `deepseek-chat` |
+| `anthropic` | bare | `claude-haiku-4-5-20251001` |
+
+A model that does not belong to the platform is rejected in a way that **reads
+exactly like a bad API key** — which is a genuinely expensive thing to debug. The
+plugin warns in the console when the two obviously disagree (a namespaced slug on
+a direct vendor, or a bare name on OpenRouter), but it cannot check that a slug
+really exists, so copy it from the provider's own page.
+
+Leave the key blank to use the platform's default.
 
 ### Tokens are not configured here
 

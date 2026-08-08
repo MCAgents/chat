@@ -14,6 +14,9 @@ import java.util.Objects;
  *                   against {@link Models#vendors()} at construction, because a
  *                   typo here would otherwise surface as an unexplained vendor
  *                   rejection much later.
+ * @param model The model identifier to send to, read from configuration. Never
+ *              blank — a blank value in the file is replaced by the platform's
+ *              default before it reaches here.
  * @param playerAllowed Whether ordinary players may use the chat command. When
  *                      {@code false} — the default — only operators can. This
  *                      is a cost control before it is a permission: every
@@ -31,6 +34,7 @@ import java.util.Objects;
  */
 public record ChatSettings(
         String vendorCode,
+        String model,
         boolean playerAllowed,
         String systemPrompt,
         int maxTurns,
@@ -67,12 +71,16 @@ public record ChatSettings(
      */
     public ChatSettings {
         Objects.requireNonNull(vendorCode, "vendorCode cannot be null");
+        Objects.requireNonNull(model, "model cannot be null");
         Objects.requireNonNull(systemPrompt, "systemPrompt cannot be null");
         Objects.requireNonNull(sessionIdleTimeout, "sessionIdleTimeout cannot be null");
 
         if (!Models.isKnown(vendorCode)) {
             throw new IllegalArgumentException("Unknown platform: " + vendorCode
                     + ". Supported platforms: " + Models.vendors());
+        }
+        if (model.isBlank()) {
+            throw new IllegalArgumentException("model cannot be blank");
         }
         if (maxTurns < 2) {
             throw new IllegalArgumentException("maxTurns must be at least 2");
@@ -82,17 +90,20 @@ public record ChatSettings(
         }
 
         vendorCode = vendorCode.trim().toLowerCase(java.util.Locale.ROOT);
+        model = model.trim();
     }
 
     /**
      * Builds settings for a vendor with every other value defaulted.
      *
      * @param vendorCode Which vendor to talk to.
-     * @return The new settings, with players disallowed.
+     * @return The new settings, using that platform's default model and with
+     *         players disallowed.
      */
     public static ChatSettings of(String vendorCode) {
         return new ChatSettings(
                 vendorCode,
+                Models.forVendor(vendorCode),
                 false,
                 DEFAULT_SYSTEM_PROMPT,
                 DEFAULT_MAX_TURNS,
@@ -100,12 +111,4 @@ public record ChatSettings(
                 io.github.mcagents.chat.api.AgentPrompt.NO_MAX_TOKENS);
     }
 
-    /**
-     * Returns the model that will be used for the configured vendor.
-     *
-     * @return The model identifier, from {@link Models}.
-     */
-    public String model() {
-        return Models.forVendor(vendorCode);
-    }
 }

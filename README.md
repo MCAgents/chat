@@ -24,6 +24,8 @@ credential storage, commands, permissions, and conversation state.
   whole server or client — this project never holds, stores, or rotates one. See
   [`wiki/guides/client-setup.md`](wiki/guides/client-setup.md).
 - Per-player conversations held in memory, with no database.
+- A configurable model, defaulting to `~deepseek/deepseek-v4-flash-latest` on
+  OpenRouter.
 - An agent instruction set under `.agents/` — placement rules, git conventions,
   task workflow, token handling, licensing, platform knowledge, and the creator
   agents that maintain the trees.
