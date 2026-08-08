@@ -86,9 +86,17 @@ never does.
 
 ## Applying a change
 
-Run the mod's chat reload command. It re-reads `mcagents.json` from disk, so a
-key you just pasted in — or one another MCAgents mod added — becomes usable
-**without restarting the game**.
+Use MCAgents core's own command — the same subcommands as the server:
+
+```
+/agents <platform> token add <token>
+/agents <platform> token remove <handle>
+```
+
+Tab completion offers a masked handle such as `#2:a3f9` for `remove`, so choosing
+which key to delete never puts the key itself on screen. Or edit
+`mcagents.json` by hand and run `/agents reload`. Either way the change takes
+effect **without restarting the game**.
 
 ## How the file stays safe to share
 

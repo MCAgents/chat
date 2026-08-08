@@ -20,8 +20,8 @@ import java.util.logging.Logger;
  *
  * <p><strong>No credentials pass through here.</strong> MCAgents core owns the
  * shared {@code mcagents.json} under the Minecraft directory, along with the
- * rotation and the eviction. This class asks core what state the credentials are
- * in and reports it — nothing more.</p>
+ * loading, the rotation, and the eviction. This class cannot see a token, set
+ * one, or reload one — it sends a prompt and receives a reply.</p>
  *
  * <p>A client has exactly one player, so unlike the server there is no player
  * identity to key a conversation on. {@link #CLIENT_SESSION} stands in for it,
@@ -64,7 +64,8 @@ public final class ModChatService {
                 Objects.requireNonNull(backend, "backend cannot be null"),
                 ChatSettings.of(platform));
 
-        report();
+        logger.info("MCAgents chat ready on " + platform
+                + ". API tokens are managed by MCAgents core.");
     }
 
     /**
@@ -92,33 +93,13 @@ public final class ModChatService {
     }
 
     /**
-     * Asks MCAgents core to re-read its shared credential file.
+     * Forgets every conversation and re-applies the settings.
      *
-     * <p>This is what backs the mod's reload command. A token added by hand — or
-     * by another MCAgents mod — becomes usable immediately, without restarting
-     * the game.</p>
-     *
-     * @return Core's credential state afterwards, so the caller can report it.
+     * <p>Only this mod's own settings and conversations. API tokens belong to
+     * MCAgents core and are managed with its own command.</p>
      */
-    public String reload() {
-        String state = service.reload(service.settings());
-        report();
-        return state;
+    public void reload() {
+        service.reload(service.settings());
     }
 
-    /**
-     * Reports the credential state, so a player can see it in the game log
-     * without running a command.
-     */
-    private void report() {
-        switch (service.tokenState()) {
-            case "READY" -> logger.info("MCAgents chat: tokens ready.");
-            case "NOT_SET" -> logger.warning("MCAgents chat: MCAgents core has no token for "
-                    + service.settings().vendorCode() + ". Add one to mcagents.json in your Minecraft "
-                    + "directory, then run the chat reload command.");
-            case "EXPIRED" -> logger.warning("MCAgents chat: every token MCAgents core had for "
-                    + service.settings().vendorCode() + " was rejected and removed.");
-            default -> logger.warning("MCAgents chat: could not read the credential state from MCAgents core.");
-        }
-    }
 }
