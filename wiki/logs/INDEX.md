@@ -21,6 +21,7 @@ approval — see
 
 | Version | Summary | Documents |
 |---|---|---|
+| [`0/4/0/`](0/4/0/CHANGELOG.md) | One request in flight per player; a second is refused rather than queued. | `CHANGELOG.md` |
 | [`0/3/0/`](0/3/0/CHANGELOG.md) | The model becomes a config.yml setting, defaulting to ~deepseek/deepseek-v4-flash-latest. | `CHANGELOG.md` |
 | [`0/2/0/`](0/2/0/CHANGELOG.md) | Prompt only: every token method removed, credentials managed entirely with core's /agents command. | `CHANGELOG.md` |
 | [`0/1/0/`](0/1/0/CHANGELOG.md) | First functional release: /chat on all three server platforms, permissions, sessions, and credentials delegated to core. | `CHANGELOG.md` |
