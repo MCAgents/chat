@@ -25,14 +25,19 @@ dependencies {
     implementation project(':api')
     implementation project(':common')
 
-    implementation project(':platforms:bukkit')
-    implementation project(':platforms:spigotmc')
-    implementation project(':platforms:papermc')
-    implementation project(':platforms:foliamc')
+    implementation project(':platforms:bukkit:core')
+    implementation project(':platforms:bukkit:spigotmc')
+    implementation project(':platforms:bukkit:papermc')
+    implementation project(':platforms:bukkit:foliamc')
 
-    implementation project(':platforms:mods')
-    implementation project(':platforms:neoforge')
-    implementation project(':platforms:fabric')
+    // Both physical sides of the mod family travel in the one jar. Which of
+    // them runs is decided at runtime by the loader, never at build time —
+    // that is what makes a single universal artifact possible.
+    implementation project(':platforms:mods:core')
+    implementation project(':platforms:mods:client')
+    implementation project(':platforms:mods:server')
+    implementation project(':platforms:mods:neoforge')
+    implementation project(':platforms:mods:fabric')
 
     // Compile against the Folia API only. Folia is a superset of the Paper and
     // Spigot APIs — it declares their `org.spigotmc:spigot-api` capability — so

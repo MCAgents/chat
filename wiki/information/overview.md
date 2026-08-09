@@ -19,11 +19,12 @@ survives a core release it was never compiled against — see
 
 ## Current state
 
-The `api`, `common`, `platforms/bukkit`, and `platforms/mods` modules carry the
-chat surface. The four entry point modules — `spigotmc`, `papermc`, `foliamc`,
-and `engine` — are wired on the server side; `neoforge` and `fabric` are
-scaffolded but hold no loader code yet, since that needs a toolchain the build
-does not have. What exists today is:
+The `api`, `common`, `platforms/bukkit/core`, and `platforms/mods/core` modules
+carry the chat surface. The four entry point modules — `bukkit/spigotmc`,
+`bukkit/papermc`, `bukkit/foliamc`, and `engine` — are wired on the server
+side; `mods/neoforge` and `mods/fabric` are scaffolded but hold no loader code
+yet, since that needs a toolchain the build does not have. What exists today
+is:
 
 | Path | What it is |
 |---|---|
@@ -33,7 +34,7 @@ does not have. What exists today is:
 | `LICENSE` | The MCAgents proprietary commercial license. |
 | `settings.gradle`, `build.gradle`, `gradle.properties` | The Gradle multi project build configuration. |
 | `gradlew`, `gradlew.bat`, `gradle/` | The Gradle wrapper and the version catalog. |
-| `api/`, `common/`, `platforms/` | The ten build modules — see [`modules.md`](modules.md). |
+| `api/`, `common/`, `platforms/` | The twelve build modules — see [`modules.md`](modules.md). |
 | `.agents/` | The agent instruction set — rules, git conventions, planning, security, compliance, platform knowledge, prompts, creators. |
 | `wiki/` | This documentation tree. |
 

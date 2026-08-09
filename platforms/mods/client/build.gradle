@@ -1,0 +1,24 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    // The shared layers are bundled once, by the engine. Every module below
+    // the engine declares them compileOnly so no jar carries a second copy.
+    compileOnly project(':api')
+    compileOnly project(':common')
+
+    // The mod family core, which holds the side machinery this module is one
+    // half of. Nothing here may depend on the server half — the two are
+    // physically separate and only the loader decides which one runs.
+    compileOnly project(':platforms:mods:core')
+}
+
+// No mod loader coordinate is declared here, for the same reason as the rest
+// of the mod family: the loader toolchains (ModDevGradle for NeoForge, Loom
+// for Fabric) arrive with the modules that need them. What this module holds
+// is the client half in plain Java, so it stays testable without a game.
+
+base {
+    archivesName = "${rootProject.name}-mods-client"
+}

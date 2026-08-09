@@ -2,6 +2,20 @@ allprojects {
     group = project.property('project-group')
     version = "${project.property('project-version')}"
 
+    // Gradle identifies a project by `group:name`, never by its path. Each
+    // platform family holds a module named `core`, so on one shared group both
+    // would be `io.github.mcagents:core` — the same module — and Gradle would
+    // resolve one away in favour of the other. Nothing would fail: the engine
+    // would simply shade eleven modules and ship without the twelfth.
+    //
+    // Qualifying a family's modules with the family folder's name keeps every
+    // module distinct while the folders stay named as they read. Only the
+    // platform modules are affected, and none of them is published, so no
+    // coordinate anyone depends on changes.
+    if (project.parent != null && project.parent.path.startsWith(':platforms:')) {
+        group = "${group}.${project.parent.name}"
+    }
+
     repositories {
         mavenCentral()
     }
