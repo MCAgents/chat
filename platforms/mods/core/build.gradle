@@ -16,6 +16,13 @@ dependencies {
 // introduced by the modules that actually need them, in the change that adds
 // real loader code.
 
+dependencies {
+    // `compileOnly` does not reach the test compile classpath, so what this
+    // module compiles against is declared again for the tests.
+    testImplementation project(':api')
+    testImplementation project(':common')
+}
+
 base {
     archivesName = "${rootProject.name}-mods"
 }

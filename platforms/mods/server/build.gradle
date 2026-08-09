@@ -21,6 +21,19 @@ dependencies {
 // is the dedicated server half in plain Java, so it stays testable without a
 // game.
 
+dependencies {
+    // `compileOnly` does not reach the test compile classpath, so what this
+    // module compiles against is declared again for the tests.
+    //
+    // `platforms:mods:client` is deliberately absent. These tests run with the
+    // client half genuinely off the classpath — the same situation a dedicated
+    // server is in — which is what lets them prove the server half never needs
+    // it.
+    testImplementation project(':api')
+    testImplementation project(':common')
+    testImplementation project(':platforms:mods:core')
+}
+
 base {
     archivesName = "${rootProject.name}-mods-server"
 }

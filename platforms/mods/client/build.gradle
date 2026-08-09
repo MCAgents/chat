@@ -19,6 +19,18 @@ dependencies {
 // for Fabric) arrive with the modules that need them. What this module holds
 // is the client half in plain Java, so it stays testable without a game.
 
+dependencies {
+    // `compileOnly` does not reach the test compile classpath, so what this
+    // module compiles against is declared again for the tests.
+    //
+    // `platforms:mods:server` is deliberately absent. These tests run with the
+    // server half genuinely off the classpath, which is what lets them prove
+    // the client half needs nothing from it.
+    testImplementation project(':api')
+    testImplementation project(':common')
+    testImplementation project(':platforms:mods:core')
+}
+
 base {
     archivesName = "${rootProject.name}-mods-client"
 }

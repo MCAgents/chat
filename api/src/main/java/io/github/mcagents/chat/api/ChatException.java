@@ -49,7 +49,23 @@ public class ChatException extends RuntimeException {
          * was sent, nothing was billed, and the earlier request is still on its
          * way. The only one of these kinds the player can act on: wait.</p>
          */
-        ALREADY_WAITING
+        ALREADY_WAITING,
+
+        /**
+         * The caller was not allowed to ask, or asked something that was not
+         * worth sending.
+         *
+         * <p>A refusal made <strong>before</strong> anything reached a vendor:
+         * nothing was sent and nothing was billed. Distinct from the kinds
+         * above because it is the only one where the answer depends on
+         * <em>who</em> asked, which is a question only a server has — a client
+         * has one user, and they already own the credentials.</p>
+         *
+         * <p>The message carries the reason and is safe to show. It never names
+         * a credential, a configured platform, or anything else a refused
+         * caller has no business learning.</p>
+         */
+        NOT_ALLOWED
     }
 
     /**

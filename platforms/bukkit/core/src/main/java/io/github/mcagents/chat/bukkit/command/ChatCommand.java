@@ -228,6 +228,11 @@ public final class ChatCommand implements CommandExecutor, TabCompleter {
                         "The AI service could not answer that. Try again shortly.";
                 case ALREADY_WAITING ->
                         "You already have a reply on the way. Wait for it before asking again.";
+                case NOT_ALLOWED ->
+                        // The refusal's own message says which rule was hit and
+                        // is written to be shown, so restating it generically
+                        // here would lose the only actionable part.
+                        chatFailure.getMessage();
             };
         }
         return "The AI service could not answer that. Try again shortly.";
