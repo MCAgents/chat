@@ -17,7 +17,7 @@ dependencies {
 
     // The Bukkit family core. This module adds only what its own server needs
     // on top of it.
-    compileOnly project(':platforms:bukkit')
+    compileOnly project(':platforms:bukkit:core')
 
     // Folia is a superset of the Paper API. It replaces the single main
     // thread with regionised multithreading, so code here must never assume

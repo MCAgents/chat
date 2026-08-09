@@ -19,18 +19,23 @@ rootProject.name = 'mcagents-chat'
 include 'api'
 include 'common'
 
-// Bukkit family. `platforms:bukkit` holds the code the three server entry
-// points share; each entry point adds only what its own server needs.
-include 'platforms:bukkit'
-include 'platforms:spigotmc'
-include 'platforms:papermc'
-include 'platforms:foliamc'
+// Bukkit family, all under `platforms/bukkit`. `platforms:bukkit:core` holds
+// the code the three server entry points share; each entry point sits beside
+// it and adds only what its own server needs.
+include 'platforms:bukkit:core'
+include 'platforms:bukkit:spigotmc'
+include 'platforms:bukkit:papermc'
+include 'platforms:bukkit:foliamc'
 
-// Mod loader family. `platforms:mods` holds the code the loader entry points
-// share, mirroring the role `platforms:bukkit` plays for the server side.
-include 'platforms:mods'
-include 'platforms:neoforge'
-include 'platforms:fabric'
+// Mod loader family, all under `platforms/mods`, mirroring the Bukkit family's
+// shape. `platforms:mods:core` holds what every mod module shares; `client`
+// and `server` hold the two physical sides, which the loaders never mix; the
+// loader entry points add only what NeoForge or Fabric itself needs.
+include 'platforms:mods:core'
+include 'platforms:mods:client'
+include 'platforms:mods:server'
+include 'platforms:mods:neoforge'
+include 'platforms:mods:fabric'
 
 // The universal entry point. It is the only module that implements every other
 // module, so a single artifact carries the whole plugin.

@@ -4,8 +4,12 @@ plugins {
 
 repositories {
     maven {
-        name = "papermc-repo"
-        url = "https://repo.papermc.io/repository/maven-public/"
+        name = "spigotmc-repo"
+        url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
+    }
+    maven {
+        name = "sonatype"
+        url = "https://oss.sonatype.org/content/repositories/snapshots"
     }
 }
 
@@ -17,12 +21,9 @@ dependencies {
 
     // The Bukkit family core. This module adds only what its own server needs
     // on top of it.
-    compileOnly project(':platforms:bukkit')
+    compileOnly project(':platforms:bukkit:core')
 
-    // Paper is a superset of the Spigot API, so this coordinate provides the
-    // Bukkit and Spigot types as well. Anything compiled against a Paper only
-    // type does not run on SpigotMC.
-    compileOnly libs.paper.api
+    compileOnly libs.spigot.api
 }
 
 processResources {
@@ -35,5 +36,5 @@ processResources {
 }
 
 base {
-    archivesName = "${rootProject.name}-papermc"
+    archivesName = "${rootProject.name}-spigotmc"
 }

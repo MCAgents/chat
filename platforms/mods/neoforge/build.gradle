@@ -8,9 +8,9 @@ dependencies {
     compileOnly project(':api')
     compileOnly project(':common')
 
-    // The mod family core, mirroring the role platforms:bukkit plays for the
+    // The mod family core, mirroring the role platforms:bukkit:core plays for the
     // server side. This module adds only what neoforge itself needs.
-    compileOnly project(':platforms:mods')
+    compileOnly project(':platforms:mods:core')
 
     compileOnly libs.gson
 }
