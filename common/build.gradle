@@ -7,6 +7,11 @@ dependencies {
     // classes are never duplicated into a consumer's classpath by this jar —
     // the engine is the single module that bundles them.
     compileOnly project(':api')
+
+    // `compileOnly` does not reach the test compile classpath, so the contracts
+    // this module implements are declared again for the tests. The engine still
+    // bundles exactly one copy; nothing here changes what ships.
+    testImplementation project(':api')
 }
 
 base {

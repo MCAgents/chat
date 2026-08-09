@@ -41,6 +41,28 @@ subprojects {
         }
     }
 
+    // Tests are JUnit 5 everywhere, wired once here rather than repeated in
+    // each module's own build file. A module with no `src/test/java` costs
+    // nothing: Gradle reports its test task as NO-SOURCE and moves on.
+    //
+    // A module that compiles against `api`, `common`, or its family core
+    // declares those `compileOnly`, which deliberately does not reach the test
+    // compile classpath. Such a module adds its own `testImplementation
+    // project(...)` lines — see `common/build.gradle`.
+    dependencies {
+        testImplementation platform(libs.junit.bom)
+        testImplementation libs.junit.jupiter
+        testRuntimeOnly libs.junit.platform.launcher
+    }
+
+    tasks.named('test') {
+        useJUnitPlatform()
+        testLogging {
+            events 'failed'
+            exceptionFormat 'full'
+        }
+    }
+
     // Only the two pure Java layers are published. The platform modules are
     // distributed as plugin and mod artifacts, so they carry no publication.
     if (project.name != 'api' && project.name != 'common') {

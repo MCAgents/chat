@@ -56,8 +56,26 @@ Useful variants:
 ## Test
 
 ```sh
-./gradlew test
+./gradlew test                        # every module
+./gradlew :common:test                # one module
+./gradlew test --tests '*ChatSettings*'    # one class
 ```
+
+Tests are **JUnit 5**, wired once in the root `build.gradle` so every module has
+a test source set without asking for one. A module with no `src/test/java`
+reports `NO-SOURCE` and costs nothing.
+
+Test sources live beside the code they cover, at
+`{module}/src/test/java/{same package}`. Only what the module compiles against
+is on the test classpath: modules declare `api` and `common` as `compileOnly`,
+which does not reach tests, so a module with tests repeats those as
+`testImplementation` in its own build file.
+
+A run writes an HTML report to `{module}/build/reports/tests/test/index.html`
+and the machine-readable results to `{module}/build/test-results/test/`.
+
+There is no CI pipeline in this repository, so this command is the only thing
+that runs the tests. Run it before opening a pull request.
 
 ## Run it on a server
 
