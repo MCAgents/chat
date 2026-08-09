@@ -16,7 +16,8 @@ Any page added to or removed from `wiki/` is reflected here **in the same commit
 | File | Purpose |
 |---|---|
 | [`information/overview.md`](information/overview.md) | What this repository is, what it is for, and what it contains today. |
-| [`information/modules.md`](information/modules.md) | The ten build modules, why core is not a build dependency, and what is published. |
+| [`information/modules.md`](information/modules.md) | The twelve build modules, why core is not a build dependency, and what is published. |
+| [`information/mod-sides.md`](information/mod-sides.md) | How the mod half runs on a client and a dedicated server from one jar, without either side loading the other's code. |
 | [`information/licensing.md`](information/licensing.md) | Who is allowed to use the software, and under which purchase terms. |
 
 ## Guides

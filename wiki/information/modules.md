@@ -79,6 +79,9 @@ and neither is named by type from anywhere else. The loaders — NeoForge and
 Fabric — sit beside them and differ only in how they announce an entry point,
 which is a much smaller difference than the one between the two sides.
 
+How the right half is started without linking the other is on
+[`mod-sides.md`](mod-sides.md).
+
 ## MCAgents/core is not a build dependency
 
 This is the decision that shapes the build, so it is worth stating plainly:
