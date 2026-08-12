@@ -42,6 +42,11 @@ subject already says everything.
   Never batch a whole working session into one commit.
 * **Review the diff before every commit.** Read what you are about to record.
 * A commit that mixes an unrelated fix into a feature is two commits.
+* **Index and memory updates ride in the same commit as the change they describe**, never
+  in a follow-up commit. A commit that adds a file without registering it, or that lands
+  work without recording it, is incomplete — see
+  [`../creators/index-creator.md`](../creators/index-creator.md) and
+  [`../rules/memory-policy.md`](../rules/memory-policy.md).
 
 ## Worked example
 
@@ -72,3 +77,8 @@ Collect the findings, and when the task is done present them to the user:
 
 Then let the user select which findings to apply. Create only the selected ones.
 Never batch-apply, never apply silently.
+
+**Scope of this gate:** it covers instruction files under `.agents/{folder}/`.
+Documentation pages under `wiki/` and `.agents/wiki/` may be written when the facts
+are real and verified. Memory under `.agents/memory/` is written freely and
+automatically — see [`../rules/memory-policy.md`](../rules/memory-policy.md).

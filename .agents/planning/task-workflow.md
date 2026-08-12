@@ -10,7 +10,12 @@ the user does not need to invoke it.
 
 ## A. Intake — Goal, Objective, Detail
 
-Before starting work, ask the user for three things **in one message**:
+**Before starting work, read [`../index/memory-index.md`](../index/memory-index.md)** and
+load any task or state file whose scope matches the request, so you **continue prior work
+rather than restarting it**. A request that looks new is often the second half of
+something already in flight.
+
+Then ask the user for three things **in one message**:
 
 * **Goal** — the outcome they want, and why it matters.
 * **Objective** — the concrete, checkable result that means the work is done.
@@ -38,8 +43,15 @@ Rules:
   * the files or areas it will touch.
 * **Order the list by dependency.** If task B builds on task A, A comes first. Two
   tasks that touch the same file are never independent — sequence them.
+* **Always append a final task for the release process**, and ensure it receives its own
+  branch and pull request. A release is work; it is not a footnote on the last feature
+  task.
 * Wait for the user to confirm the list. If they change it, re-present the
   renumbered list before starting.
+* **Once confirmed, write the list to `.agents/memory/tasks/{slug}.md`** — the numbered
+  tasks, their branches, and their status — per
+  [`../creators/memory-creator.md`](../creators/memory-creator.md). A plan that lives only
+  in the conversation is lost the moment the session ends.
 
 ## C. One branch per task, stacked in order
 
@@ -62,7 +74,25 @@ Rules:
 * If task `k` invalidates an assumption behind a later task, **stop**, update the
   plan, and tell the user rather than silently reworking the list.
 
-## E. Pull requests and merging
+## E. Record as you go
+
+Memory is written **automatically, without approval** — see
+[`../rules/memory-policy.md`](../rules/memory-policy.md).
+
+* **After each task, update its `.agents/memory/tasks/{slug}.md` entry**: what landed, the
+  branch, the pull request, and what is left.
+* **Record any decision a future session would otherwise re-litigate** in
+  `.agents/memory/decisions/{slug}.md` — the context, the options, the choice, and the
+  consequence.
+* **Update the owning index in the same commit** as any file you add, move, rename, or
+  remove, per [`../creators/index-creator.md`](../creators/index-creator.md).
+* Keep `.agents/memory/state/` current when a task changes what is live, broken, or in
+  flight.
+
+A task that ships with nothing written to memory has failed the workflow, however good
+the code is.
+
+## F. Pull requests and merging
 
 * When all tasks are done, push every branch, then open **one pull request per
   branch** — never one pull request covering several tasks.
@@ -80,7 +110,8 @@ Rules:
   unambiguous. When resolving it would mean choosing between two behaviors, stop
   and ask, naming the conflicting files.
 * **Report the final state**: which pull requests merged, in what order, and
-  anything left open.
+  anything left open. **Close out the memory task file** — mark it `status: done` with a
+  closing entry.
 
 ## Discovery Protocol
 
@@ -95,3 +126,8 @@ Collect the findings, and when the task is done present them to the user:
 
 Then let the user select which findings to apply. Create only the selected ones.
 Never batch-apply, never apply silently.
+
+**Scope of this gate:** it covers instruction files under `.agents/{folder}/`.
+Documentation pages under `wiki/` and `.agents/wiki/` may be written when the facts
+are real and verified. Memory under `.agents/memory/` is written freely and
+automatically — see [`../rules/memory-policy.md`](../rules/memory-policy.md).
