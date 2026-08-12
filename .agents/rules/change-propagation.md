@@ -28,8 +28,10 @@ actually invalidated it — an untouched page is not a chore.
 | A public type, method, or its behavior | The `wiki/reference/` page covering it |
 | How a consumer is meant to use something | The `wiki/guides/` page covering it |
 | What the project is or does | [`../../wiki/information/overview.md`](../../wiki/information/overview.md), and `README.md` if the summary there is now wrong |
-| Any file added, removed, moved, or renamed in an indexed scope | The `INDEX.md` owning that scope — see [`../creators/index-creator.md`](../creators/index-creator.md) |
-| A new folder under `wiki/` or `.agents/` | The folder table in [`directories.md`](directories.md), plus the owning index |
+| Any file added, removed, moved, or renamed in an indexed scope | The index in `.agents/index/` owning that scope — see [`../creators/index-creator.md`](../creators/index-creator.md) |
+| A new folder under `wiki/` or `.agents/` | The folder tables in [`directories.md`](directories.md), plus the owning index |
+| What is live, broken, or in flight in an area | [`../memory/state/repository-state.md`](../memory/state/repository-state.md), and the `tasks/` file for the work — see [`memory-policy.md`](memory-policy.md) |
+| Orientation an agent relies on — layout, commands, entry points, gotchas | [`../wiki/context/repository-map.md`](../wiki/context/repository-map.md) |
 | Something an instruction in `.agents/` asserts | That instruction — **by proposal, see below** |
 
 ## Which commit
@@ -44,7 +46,9 @@ belongs to [`versioning.md`](versioning.md).
 
 ## The `.agents/` exception
 
-`wiki/` pages, `README.md`, and every `INDEX.md` are yours to update directly.
+`wiki/` pages, `.agents/wiki/` pages, `README.md`, every index in `.agents/index/`, and
+everything under `.agents/memory/` are yours to update directly. Memory in particular
+needs no approval — see [`memory-policy.md`](memory-policy.md).
 
 **`.agents/` instructions are not.** When a change makes an instruction wrong, do
 not rewrite it — that is exactly what the Discovery Protocol exists to prevent, and
@@ -60,20 +64,23 @@ the pull request body which instructions you left stale and why.
 
 Ask, and answer honestly:
 
-1. Does any page still describe the behavior I just changed?
+1. Does any page in either wiki tree still describe the behavior I just changed?
 2. Did I add or remove a file in an indexed scope without touching its index?
-3. Does an instruction in `.agents/` now assert something untrue?
-4. Would a reader who trusted these documents be misled by this commit?
+3. Did I finish a meaningful unit of work without writing anything to
+   `.agents/memory/`?
+4. Does an instruction in `.agents/` now assert something untrue?
+5. Would a reader who trusted these documents be misled by this commit?
 
-A "yes" to 1 or 2 means the commit is not ready. A "yes" to 3 means a Discovery
-finding to present. A "yes" to 4 means both, and means say so out loud rather than
+A "yes" to 1, 2, or 3 means the commit is not ready. A "yes" to 4 means a Discovery
+finding to present. A "yes" to 5 means both, and means say so out loud rather than
 hoping it is noticed.
 
 ## This is a convention, not automation
 
-Nothing enforces this rule mechanically. It holds because the reading order in
-[`../../AGENTS.md`](../../AGENTS.md) puts it in front of an agent before the work
-starts, and because pull request review catches what slips past. If this rule ever
+Nothing enforces this rule mechanically. It holds because the auto-activation contract in
+[`../../AGENTS.md`](../../AGENTS.md) puts it in front of an agent before the work starts —
+see [`auto-activation.md`](auto-activation.md) — and because pull request review catches
+what slips past. If this rule ever
 needs teeth — a CI check that fails a commit touching `api/` without touching
 `wiki/`, or a hook that refuses one adding a file without touching its index — that
 is a real change to propose, not something this file can assert into being.
@@ -91,3 +98,8 @@ Collect the findings, and when the task is done present them to the user:
 
 Then let the user select which findings to apply. Create only the selected ones.
 Never batch-apply, never apply silently.
+
+**Scope of this gate:** it covers instruction files under `.agents/{folder}/`.
+Documentation pages under `wiki/` and `.agents/wiki/` may be written when the facts
+are real and verified. Memory under `.agents/memory/` is written freely and
+automatically — see [`memory-policy.md`](memory-policy.md).
