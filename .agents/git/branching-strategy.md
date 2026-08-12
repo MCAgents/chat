@@ -53,21 +53,8 @@ what keeps the merges conflict-free. See
 [`../planning/task-workflow.md`](../planning/task-workflow.md) for the full
 intake, ordering, and merge procedure.
 
-## Discovery Protocol
+## Changing this rule
 
-While working, if you notice an instruction worth adding — a new rule, or new
-content for an existing instruction file — do NOT create or edit it yourself.
-Collect the findings, and when the task is done present them to the user:
-
-* one finding per message block, each in its own code block;
-* include the proposed file path, `name`, `description`, and the full proposed
-  body;
-* explain in one line why it is worth adding.
-
-Then let the user select which findings to apply. Create only the selected ones.
-Never batch-apply, never apply silently.
-
-**Scope of this gate:** it covers instruction files under `.agents/{folder}/`.
-Documentation pages under `wiki/` and `.agents/wiki/` may be written when the facts
-are real and verified. Memory under `.agents/memory/` is written freely and
-automatically — see [`../rules/memory-policy.md`](../rules/memory-policy.md).
+This file is an instruction, so it is **not yours to edit on your own initiative** — even
+when you are confident it is wrong. Collect the finding and propose it, per
+[`../rules/discovery-protocol.md`](../rules/discovery-protocol.md).
