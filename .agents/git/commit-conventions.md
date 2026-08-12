@@ -28,6 +28,8 @@ could confuse.
 
 * Imperative mood — "add", not "added" or "adds".
 * Plain text. No links, no issue-tracker IDs, no emoji.
+* **No session link, in the subject, the body, or a trailer** — see
+  [`../rules/no-session-links.md`](../rules/no-session-links.md).
 * No trailing period.
 * Say what the change does, specifically.
 

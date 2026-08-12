@@ -43,6 +43,7 @@ rule you are setting aside.
 | Start work on a confirmed task | [`.agents/prompts/branch-and-commit.md`](.agents/prompts/branch-and-commit.md) |
 | Create a branch | [`.agents/git/branching-strategy.md`](.agents/git/branching-strategy.md) |
 | Write a commit message | [`.agents/git/commit-conventions.md`](.agents/git/commit-conventions.md) |
+| Attribute a change, or write any commit trailer or pull request footer | [`.agents/rules/no-session-links.md`](.agents/rules/no-session-links.md) |
 | Open or update a pull request | [`.agents/git/pull-request-template.md`](.agents/git/pull-request-template.md) |
 | Decide where a new file goes | [`.agents/rules/directories.md`](.agents/rules/directories.md) |
 | Add, move, rename, or delete any file under `.agents/` or `wiki/` | [`.agents/creators/index-creator.md`](.agents/creators/index-creator.md) |

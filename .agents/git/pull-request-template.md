@@ -15,6 +15,8 @@ not for a parser.
   see [`commit-conventions.md`](commit-conventions.md).
 * Write a plain, capitalized phrase, verb-first where it reads naturally.
 * No trailing period, no issue IDs, no emoji, no branch names.
+* **No session link**, in the title or anywhere in the body — see
+  [`../rules/no-session-links.md`](../rules/no-session-links.md).
 * Say what the change **is**, specifically. "Update files" is not a title.
 * Lead with `Breaking Change` when the pull request breaks an existing contract.
 

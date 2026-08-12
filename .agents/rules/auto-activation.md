@@ -39,6 +39,7 @@ Before doing any work, in this order:
 | Start work on a confirmed task | [`../prompts/branch-and-commit.md`](../prompts/branch-and-commit.md) |
 | Create a branch | [`../git/branching-strategy.md`](../git/branching-strategy.md) |
 | Write a commit message | [`../git/commit-conventions.md`](../git/commit-conventions.md) |
+| Attribute a change, or write any commit trailer or pull request footer | [`no-session-links.md`](no-session-links.md) |
 | Open or update a pull request | [`../git/pull-request-template.md`](../git/pull-request-template.md) |
 | Decide where a new file goes | [`directories.md`](directories.md) |
 | Add, move, rename, or delete any file under `.agents/` or `wiki/` | [`../creators/index-creator.md`](../creators/index-creator.md) |

@@ -27,13 +27,26 @@ explicit user approval per `.agents/planning/task-workflow.md`.
   `logs-index.md`.
 - `.agents/wiki/context/repository-map.md` added — the agent orientation page.
 - `.agents/memory/` seeded with `state/repository-state.md` and this file.
-- `.agents/rules/auto-activation.md` and `.agents/rules/memory-policy.md` added.
+- `.agents/rules/auto-activation.md`, `.agents/rules/memory-policy.md`, and
+  `.agents/rules/no-session-links.md` added.
 - `.agents/creators/memory-creator.md` added as the fifth creator.
 - `AGENTS.md` gained the auto-activation contract and the trigger table; the trigger
   table is mirrored from `auto-activation.md`, which is the source of truth.
 
 **Decisions made, so a later session does not re-litigate them.**
 
+- **Session links are forbidden everywhere**, added as
+  `.agents/rules/no-session-links.md` at the user's instruction. The rule covers
+  files, commit subjects, bodies, and trailers, branch names, tags, and pull request
+  titles, bodies, and comments. A product link is not a session link; a
+  `Co-Authored-By:` trailer carrying no URL is not either.
+- **The eight commits on this branch were rewritten to comply before merging.** They
+  had been pushed with a `Claude-Session:` trailer that the harness appends by
+  default. The user's instruction overrides that default, so the trailers were
+  stripped and the branch force-pushed with `--force-with-lease` while it was still
+  unmerged. Both pull request bodies were edited for the same reason. Had the
+  trailers already reached `master`, the rule says to report them and leave them
+  rather than rewrite published history.
 - **No new version directory.** `wiki/logs/` already carries `0/0/0` through
   `0/4/0`, and `gradle.properties` says `0.4.0`. Creating a version directory is a
   version claim requiring user approval, so this task created none and bumped

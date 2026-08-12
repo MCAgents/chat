@@ -22,6 +22,7 @@ from `.agents/` is reflected in this index **in the same commit**.
 | [`../rules/auto-activation.md`](../rules/auto-activation.md) | When each instruction fires without being asked, and which rule wins a conflict. |
 | [`../rules/directories.md`](../rules/directories.md) | Where a new file goes across all four trees, and how to create a folder when none fits. |
 | [`../rules/memory-policy.md`](../rules/memory-policy.md) | What may be written to `.agents/memory/`, in what format, and what never goes there. |
+| [`../rules/no-session-links.md`](../rules/no-session-links.md) | Never put an assistant or tool session link in a file, commit, branch, or pull request. |
 | [`../rules/change-propagation.md`](../rules/change-propagation.md) | A change to code or structure updates the docs, indexes, and memory it invalidates, in the same commit. |
 | [`../rules/versioning.md`](../rules/versioning.md) | Never change the project version without user approval. |
 | [`../rules/repository.md`](../rules/repository.md) | What is actually true about this repository right now. |
