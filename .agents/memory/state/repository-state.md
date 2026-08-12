@@ -47,8 +47,8 @@ directory architecture, auto-activation, versioning, memory policy, no-session-l
 the discovery protocol and the five creators all come from the connector. `AGENTS.md`
 carries the bootstrap block that resolves it.
 
-`.agents/` holds only what is this repository's own — four instructions across
-`rules/`, `security/`, `compliance/` and `knowledge/`, the six indexes in
+`.agents/` holds only what is this repository's own — five instructions across
+`rules/` (two), `security/`, `compliance/` and `knowledge/`, the six indexes in
 `.agents/index/`, the agent wiki, and this memory tree. The override table in
 `.agents/index/root-index.md` is empty: the shared set is taken unchanged. No
 `INDEX.md` exists anywhere in the repository. See

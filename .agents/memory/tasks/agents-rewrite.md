@@ -86,6 +86,6 @@ Nothing was dropped as untraceable.
 
 ## State after this task
 
-`.agents/` holds 16 files: 6 indexes, 4 local instructions across `rules/`,
-`security/`, `compliance/`, `knowledge/`, 1 agent wiki page, and 5 memory files. No
+`.agents/` holds 17 files: 6 indexes, 5 local instructions across `rules/` (two),
+`security/`, `compliance/` and `knowledge/`, 1 agent wiki page, and 5 memory files. No
 `INDEX.md`. Nothing the connector serves exists here as a file.
