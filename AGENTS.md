@@ -48,6 +48,7 @@ rule you are setting aside.
 | Decide where a new file goes | [`.agents/rules/directories.md`](.agents/rules/directories.md) |
 | Add, move, rename, or delete any file under `.agents/` or `wiki/` | [`.agents/creators/index-creator.md`](.agents/creators/index-creator.md) |
 | Write a rule or instruction | [`.agents/creators/instruction-creator.md`](.agents/creators/instruction-creator.md) |
+| Notice a rule worth adding, or find an instruction that is wrong | [`.agents/rules/discovery-protocol.md`](.agents/rules/discovery-protocol.md) |
 | Write documentation, an SOP, or a domain guideline | [`.agents/creators/information-creator.md`](.agents/creators/information-creator.md) |
 | Record progress, a decision, or session state | [`.agents/creators/memory-creator.md`](.agents/creators/memory-creator.md) |
 | Decide what may be written to memory, and how | [`.agents/rules/memory-policy.md`](.agents/rules/memory-policy.md) |
@@ -133,6 +134,11 @@ creating a new folder when nothing fits.
 > verified. Writing memory under `.agents/memory/` is expected and needs no
 > approval — see
 > [`.agents/rules/memory-policy.md`](.agents/rules/memory-policy.md).
+
+The authority behind this block is
+[`.agents/rules/discovery-protocol.md`](.agents/rules/discovery-protocol.md). It is
+reproduced here because this file is the session's first read; everywhere else it is
+linked, not copied.
 
 ## No session links
 
