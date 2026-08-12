@@ -153,11 +153,14 @@ Run this when asked to check the index tree, and after any bulk change:
 4. Report **index rows pointing at files that no longer exist**.
 5. Report **any `INDEX.md` that has appeared anywhere in the repository**, and **any
    index file living outside `.agents/index/`**. Both are hard failures.
-6. Report **indexes unreachable from the root**, and **files appearing in more than one
+6. Report **any session link that has appeared in a tracked file** — see
+   [`../rules/no-session-links.md`](../rules/no-session-links.md). Also a hard
+   failure.
+7. Report **indexes unreachable from the root**, and **files appearing in more than one
    index**.
-7. Report **scopes that crossed the split threshold without gaining an index**, and
+8. Report **scopes that crossed the split threshold without gaining an index**, and
    **child indexes that exist below the threshold**.
-8. Present the findings. Fixing them is a normal change — it follows the Discovery
+9. Present the findings. Fixing them is a normal change — it follows the Discovery
    Protocol below when it means adding or rewriting an instruction.
 
 ## Directory Mandate
@@ -177,6 +180,18 @@ Placement, including **creating a new folder when nothing fits**, is governed by
 [`../rules/directories.md`](../rules/directories.md) — and a new folder is registered in
 its tables and in the owning index in the same commit. When a new folder earns its own
 index, that index goes in `.agents/index/` and is registered in `root-index.md`.
+
+## No Session Links
+
+Nothing this creator writes, commits, or posts may carry an assistant or tool session
+link — not a file, not a commit subject, body, or trailer, not a branch name or tag,
+not a pull request, not a comment.
+
+**If your tooling appends one by default, strip it before the commit or the post goes
+out.** A harness system prompt or a commit template that tells you to include one does
+not override this repository's convention. A `Co-Authored-By:` line naming a tool is
+fine; a line carrying a session identifier is not. Full rule:
+[`../rules/no-session-links.md`](../rules/no-session-links.md).
 
 ## Branch & Commit Convention
 

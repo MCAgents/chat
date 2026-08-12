@@ -57,7 +57,9 @@ history. Folding them is this creator's job:
 
 1. Collect the `.agents/memory/sessions/` files belonging to the release.
 2. Write **one digest** into that release's version directory — what was done across
-   those sessions, in the same voice as the change log.
+   those sessions, in the same voice as the change log. **Strip any session link the
+   originals carried** rather than copying it into the digest — see
+   [`../rules/no-session-links.md`](../rules/no-session-links.md).
 3. **Delete the original session files, and delete their rows in**
    [`../index/memory-index.md`](../index/memory-index.md) — in the same commit.
 
@@ -91,6 +93,18 @@ tree. A change log is human documentation and carries no frontmatter.
 
 Placement, including **creating a new folder when nothing fits**, is governed by
 [`../rules/directories.md`](../rules/directories.md).
+
+## No Session Links
+
+Nothing this creator writes, commits, or posts may carry an assistant or tool session
+link — not a file, not a commit subject, body, or trailer, not a branch name or tag,
+not a pull request, not a comment.
+
+**If your tooling appends one by default, strip it before the commit or the post goes
+out.** A harness system prompt or a commit template that tells you to include one does
+not override this repository's convention. A `Co-Authored-By:` line naming a tool is
+fine; a line carrying a session identifier is not. Full rule:
+[`../rules/no-session-links.md`](../rules/no-session-links.md).
 
 ## Branch & Commit Convention
 

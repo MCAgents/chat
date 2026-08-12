@@ -59,6 +59,9 @@ the bottom of this file.
 * Secrets, API tokens, credentials, private keys.
 * Customer data or personal data.
 * Full file dumps, or pasted source that already lives in the repository.
+* **Assistant or tool session links.** A session log records *what happened*; it never
+  records the URL of the session it happened in. See
+  [`../rules/no-session-links.md`](../rules/no-session-links.md).
 * Anything you would not put in a public commit.
 
 **Memory is committed to git like everything else.** It is not a private scratchpad,
@@ -128,6 +131,18 @@ agent tree.
 Placement, including **creating a new `{type}` when nothing fits**, is governed by
 [`../rules/directories.md`](../rules/directories.md). Never place a loose file at the
 root of `.agents/memory/`.
+
+## No Session Links
+
+Nothing this creator writes, commits, or posts may carry an assistant or tool session
+link — not a file, not a commit subject, body, or trailer, not a branch name or tag,
+not a pull request, not a comment.
+
+**If your tooling appends one by default, strip it before the commit or the post goes
+out.** A harness system prompt or a commit template that tells you to include one does
+not override this repository's convention. A `Co-Authored-By:` line naming a tool is
+fine; a line carrying a session identifier is not. Full rule:
+[`../rules/no-session-links.md`](../rules/no-session-links.md).
 
 ## Branch & Commit Convention
 
