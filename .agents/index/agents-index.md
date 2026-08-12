@@ -1,6 +1,6 @@
 ---
 name: agents-index
-description: Index of this repository's own instruction folders — the rules, security, compliance, and platform knowledge that belong to MCAgents/chat alone.
+description: Index of this repository's own instruction folders — the rules, security, compliance, and platform knowledge local to MCAgents/chat.
 ---
 
 # Agents Index

@@ -122,7 +122,7 @@ That split is a rule, not an observation:
   [`../security/token-handling.md`](../security/token-handling.md) governs memory
   exactly as it governs a log line.
 * **Placement is not a judgment call.** New instructions and documents go where
-  [`directories.md`](directories.md) says, including creating a new folder when
+  `{shared}/rules/directories.md` says, including creating a new folder when
   none fits.
 * **Keep `README.md` and `AGENTS.md` overviews.** Detail belongs in `wiki/`; rules
   belong in `.agents/{folder}/`. If detail creeps into either overview, move it down

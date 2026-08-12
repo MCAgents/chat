@@ -1,6 +1,6 @@
 ---
 name: agents-entry-point
-description: Entry point for agents working in MCAgents/chat — connector bootstrap, the auto-activation contract, the trigger table, reading order, and routing protocol.
+description: Entry point for agents in MCAgents/chat — connector bootstrap, the auto-activation contract, the trigger table, and routing.
 ---
 
 # AGENTS
