@@ -108,10 +108,26 @@ None of these are tracked. Do not commit them, and do not document a path under
   [`../../compliance/licensing.md`](../../compliance/licensing.md) before touching
   `LICENSE` or adding a dependency.
 
+## Where your instructions come from
+
+Only part of the instruction set is in this repository. The universal half — branching,
+commits, pull requests, task workflow, directory architecture, versioning, memory
+policy, no-session-links, the discovery protocol, the five creators — is served by the
+**`lxagents-agents-base`** MCP connector and read as `agents://{folder}/{file}.md`.
+Resolve it before working: `agents://manifest.json` tells you what exists in one read,
+and `agents://index/root-index.md` routes you into it.
+
+What is local is what is genuinely this repository's: `.agents/rules/`,
+`.agents/security/`, `.agents/compliance/`, `.agents/knowledge/`, both wiki trees,
+every index, and `.agents/memory/`. Do not copy a shared file into this repository to
+have it close to hand — the copy overrides the shared one by `name` and then goes
+stale without a signal. If the connector is unreachable, say so and work from the
+local set; do not reconstruct what you could not read.
+
 ## Before you write a file
 
 Placement is not a judgment call — run the algorithm in
-[`../../rules/directories.md`](../../rules/directories.md). Four trees, and the tree
+`{shared}/rules/directories.md`. Four trees, and the tree
 is not negotiable:
 
 * rules → `.agents/{folder}/{file}.md` (gated)

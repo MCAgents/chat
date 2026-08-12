@@ -8,6 +8,29 @@ description: Rules specific to the MCAgents/chat repository — what it is, what
 This is a hub. It records what is true about **this** repository and links out to
 the specialized rules rather than restating them.
 
+## How this repository resolves its instructions
+
+This repository is a **consumer** of the LXAgents shared instruction set. The set is
+served by the **`lxagents-agents-base`** MCP connector and is read over `agents://`;
+there is no checkout, no submodule, and nothing to keep in sync.
+
+* **Universal conventions are not written here.** Branching, commit format, pull
+  requests, the task workflow, the directory architecture, auto-activation,
+  versioning, memory policy, no-session-links, the discovery protocol, and the five
+  creators all come from the connector. A file that can be read from `agents://` must
+  never exist in this repository as a copy.
+* **This repository carries only what is its own** — the rules in this folder,
+  `security/`, `compliance/`, `knowledge/`, every index in `.agents/index/`, the two
+  wiki trees, and `.agents/memory/`.
+* **A local file may override a shared one by `name`, whole-file.** It is a cost, not
+  a feature, and it is only legitimate once it has a row and a stated reason in
+  [`../index/root-index.md`](../index/root-index.md). There are none today.
+* **If the connector is unreachable**, say so plainly, work from this local set and
+  the user's instructions, and do not reconstruct the missing rules from memory or
+  paste them in as a workaround.
+* A rule you believe should be universal is proposed against the shared set, never
+  written here — see `{shared}/rules/discovery-protocol.md`.
+
 ## Current state — read this before assuming anything
 
 `MCAgents/chat` is a **Gradle multi project build on Java 25**. The tracked files
@@ -23,6 +46,11 @@ are:
   `.agents/index/` (every index), `.agents/wiki/` (agent knowledge), and
   `.agents/memory/` (dynamic state)
 * `wiki/` — the human documentation tree, including `wiki/logs/` release history
+
+The build and tooling files at the root — `settings.gradle`, `gradlew`,
+`.gitignore`, `.gitattributes` — sit outside the documentation architecture's scope.
+It governs instruction and documentation files; it does not ask you to move a build
+script.
 
 The module graph and the published coordinates are documented once, in
 [`../../wiki/information/modules.md`](../../wiki/information/modules.md). Do not
@@ -73,7 +101,7 @@ That split is a rule, not an observation:
 * **A change carries its documentation with it** — see
   [`change-propagation.md`](change-propagation.md).
 * **The default branch is `master`.** Branch from it, never commit to it directly —
-  see [`../git/branching-strategy.md`](../git/branching-strategy.md).
+  see `{shared}/git/branching-strategy.md`.
 * **The license is proprietary and fixed.** MCAgents, 2026. Do not change the
   license, the copyright holder, or the year without explicit user instruction —
   that is a legal statement, not a code change. See
@@ -82,15 +110,15 @@ That split is a rule, not an observation:
   tokens on machines their owner does not control. See
   [`../security/token-handling.md`](../security/token-handling.md) before touching
   anything that reads, writes, logs, or displays one.
-* **Never bump the version yourself** — see [`versioning.md`](versioning.md). The
+* **Never bump the version yourself** — see `{shared}/rules/versioning.md`. The
   version carrier is `project-version` in `gradle.properties`, currently `0.4.0`.
   `wiki/logs/` carries `0/0/0` through `0/4/0`; creating another version directory
   requires user approval, exactly like editing that property.
 * **Never create an `INDEX.md`.** Every index is a file in `.agents/index/`, named
-  `{scope}-index.md`. This is absolute — see [`directories.md`](directories.md).
+  `{scope}-index.md`. This is absolute — see `{shared}/rules/directories.md`.
 * **Write memory as you work.** Finishing a meaningful unit of work without recording
   it under `.agents/memory/` is an incomplete task, and needs no approval — see
-  [`memory-policy.md`](memory-policy.md). A token must never reach a memory file:
+  `{shared}/rules/memory-policy.md`. A token must never reach a memory file:
   [`../security/token-handling.md`](../security/token-handling.md) governs memory
   exactly as it governs a log line.
 * **Placement is not a judgment call.** New instructions and documents go where
@@ -116,4 +144,4 @@ updated freely; this file changes only by proposal.
 
 This file is an instruction, so it is **not yours to edit on your own initiative** — even
 when you are confident it is wrong. Collect the finding and propose it, per
-[`discovery-protocol.md`](discovery-protocol.md).
+`{shared}/rules/discovery-protocol.md`.
