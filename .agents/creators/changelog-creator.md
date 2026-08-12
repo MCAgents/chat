@@ -50,12 +50,47 @@ the size of the change.
 * Corrections go into the **next** version's log.
 * Never re-tag a released version.
 
+## Fold the session memory into the release
+
+At each release, the working sessions that produced it stop being live state and become
+history. Folding them is this creator's job:
+
+1. Collect the `.agents/memory/sessions/` files belonging to the release.
+2. Write **one digest** into that release's version directory — what was done across
+   those sessions, in the same voice as the change log.
+3. **Delete the original session files, and delete their rows in**
+   [`../index/memory-index.md`](../index/memory-index.md) — in the same commit.
+
+`decisions/`, `tasks/`, and `state/` files are **not** folded. Decisions are permanent,
+state is always current, and a shipped task keeps its record with `status: done`. Only
+`sessions/` roll up. Full retention policy:
+[`../rules/memory-policy.md`](../rules/memory-policy.md).
+
 ## Keeping the logs index current
 
-Keep [`../../wiki/logs/INDEX.md`](../../wiki/logs/INDEX.md) listing **every
+Keep [`../index/logs-index.md`](../index/logs-index.md) listing **every
 version, newest first** — one row per version directory, with a one-line summary
 and the files that directory contains. A new version directory and its index row
 land in the same commit.
+
+## Directory Mandate
+
+* **Change logs** → `wiki/logs/{Major}/{Minor}/{Patch}/{file-name}.md` — this creator's
+  tree, and the one place in `wiki/` allowed to go deeper than `{folder}/{file}.md`.
+* **Indexes** → `.agents/index/{scope}-index.md`. **No `INDEX.md` anywhere, ever** — the
+  logs are routed from `.agents/index/logs-index.md`, never from a file inside
+  `wiki/logs/`.
+* **Agent wiki** → `.agents/wiki/{type}/{file-name}.md`, frontmatter required;
+  **agent memory** → `.agents/memory/{type}/{file-name}.md`, ungated.
+* **Human wiki** → `wiki/{folder}/{file-name}.md`, plain markdown, no frontmatter;
+  **instructions** → `.agents/{folder}/{file}.md`, gated.
+
+**Audience test:** a human contributor reads it → `wiki/`; it exists so an agent behaves
+correctly → `.agents/wiki/`; both → write it once in `wiki/` and link from the agent
+tree. A change log is human documentation and carries no frontmatter.
+
+Placement, including **creating a new folder when nothing fits**, is governed by
+[`../rules/directories.md`](../rules/directories.md).
 
 ## Branch & Commit Convention
 
@@ -90,6 +125,8 @@ This convention applies to **every commit this creator makes**.
 * Optional body: short bullets explaining what and why.
 * Commit each logical change or group of related changes — never batch a whole
   session into one commit. Review the diff before every commit.
+* **Index and memory updates ride in the same commit as the change they describe**,
+  never in a follow-up commit.
 * This format applies to **commit messages only. Pull request titles use a
   different format** — see
   [`../git/pull-request-template.md`](../git/pull-request-template.md).
@@ -100,19 +137,17 @@ Worked example:
 docs(logs): add the 0.1.0 change log
 
 - add wiki/logs/0/1/0/CHANGELOG.md
-- register the version in wiki/logs/INDEX.md
+- fold the release's session memory into wiki/logs/0/1/0/NOTES.md
+- register the version in .agents/index/logs-index.md
 ```
 
 ## Standing reminders
 
-* **Placement** is governed by
-  [`../rules/directories.md`](../rules/directories.md), including its instruction
-  to create a new folder when nothing fits — and to register that folder in the
-  directory table and the owning index in the same commit. `wiki/logs/` is the one
-  tree that goes deeper than `{tree}/{folder}/{file}.md`, and only in the
-  `{Major}/{Minor}/{Patch}/` shape above.
-* **Every file created or removed must be registered in the index that owns that
-  scope, in the same commit**, per [`index-creator.md`](index-creator.md).
+* **Every file created, moved, renamed, or removed must be registered in the index that
+  owns that scope, in the same commit**, per [`index-creator.md`](index-creator.md). For
+  this creator that is [`../index/logs-index.md`](../index/logs-index.md), and
+  [`../index/memory-index.md`](../index/memory-index.md) when a session fold removes
+  rows.
 * **Any pull request this creator opens follows**
   [`../git/pull-request-template.md`](../git/pull-request-template.md) — a
   human-readable title, never a commit-style prefix — and **merging requires user
@@ -134,3 +169,8 @@ Collect the findings, and when the task is done present them to the user:
 
 Then let the user select which findings to apply. Create only the selected ones.
 Never batch-apply, never apply silently.
+
+**Scope of this gate:** it covers instruction files under `.agents/{folder}/`.
+Documentation pages under `wiki/` and `.agents/wiki/` may be written when the facts
+are real and verified. Memory under `.agents/memory/` is written freely and
+automatically — see [`../rules/memory-policy.md`](../rules/memory-policy.md).
