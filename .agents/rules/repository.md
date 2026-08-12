@@ -17,9 +17,12 @@ are:
 * `LICENSE` — the MCAgents proprietary commercial license
 * `settings.gradle`, `build.gradle`, `gradle.properties`, `gradlew`,
   `gradlew.bat`, `gradle/` — the build, the wrapper, and the version catalog
-* `api/`, `common/`, `platforms/` — the ten modules, all packaged under
+* `api/`, `common/`, `platforms/` — the twelve modules, all packaged under
   `io.github.mcagents.chat`
-* the `.agents/` instruction tree and the `wiki/` documentation tree
+* `.agents/` — the instruction folders, plus three reserved structural trees:
+  `.agents/index/` (every index), `.agents/wiki/` (agent knowledge), and
+  `.agents/memory/` (dynamic state)
+* `wiki/` — the human documentation tree, including `wiki/logs/` release history
 
 The module graph and the published coordinates are documented once, in
 [`../../wiki/information/modules.md`](../../wiki/information/modules.md). Do not
@@ -61,13 +64,12 @@ That split is a rule, not an observation:
 
 ## Rules
 
-* **Do not fabricate architecture.** Until source lands, `wiki/` describes the
-  repository as it is. No speculative architecture pages, no placeholder API
-  reference, no TODO-filled documents.
-* **Record commands only once they are real.** When a build system is introduced,
-  add its actual build / test / run commands to
-  [`../../wiki/environments/setup.md`](../../wiki/environments/setup.md) and
-  summarize them here. Never write a command you have not seen work in this repo.
+* **Do not fabricate architecture.** `wiki/` describes the repository as it is. No
+  speculative architecture pages, no placeholder API reference, no TODO-filled
+  documents, and no page describing a module that holds no code.
+* **Record commands only once they are real.** The build, test, and publish commands
+  live in [`../../wiki/environments/setup.md`](../../wiki/environments/setup.md).
+  Never write a command you have not seen work in this repository.
 * **A change carries its documentation with it** — see
   [`change-propagation.md`](change-propagation.md).
 * **The default branch is `master`.** Branch from it, never commit to it directly —
@@ -80,20 +82,35 @@ That split is a rule, not an observation:
   tokens on machines their owner does not control. See
   [`../security/token-handling.md`](../security/token-handling.md) before touching
   anything that reads, writes, logs, or displays one.
-* **Never bump the version yourself** — see [`versioning.md`](versioning.md).
+* **Never bump the version yourself** — see [`versioning.md`](versioning.md). The
+  version carrier is `project-version` in `gradle.properties`, currently `0.4.0`.
+  `wiki/logs/` carries `0/0/0` through `0/4/0`; creating another version directory
+  requires user approval, exactly like editing that property.
+* **Never create an `INDEX.md`.** Every index is a file in `.agents/index/`, named
+  `{scope}-index.md`. This is absolute — see [`directories.md`](directories.md).
+* **Write memory as you work.** Finishing a meaningful unit of work without recording
+  it under `.agents/memory/` is an incomplete task, and needs no approval — see
+  [`memory-policy.md`](memory-policy.md). A token must never reach a memory file:
+  [`../security/token-handling.md`](../security/token-handling.md) governs memory
+  exactly as it governs a log line.
 * **Placement is not a judgment call.** New instructions and documents go where
   [`directories.md`](directories.md) says, including creating a new folder when
   none fits.
-* **Keep `README.md` and `AGENTS.md` overviews.** Detail belongs in `wiki/`;
-  rules belong in `.agents/`. If detail creeps into either overview, move it down
-  rather than leaving it.
+* **Keep `README.md` and `AGENTS.md` overviews.** Detail belongs in `wiki/`; rules
+  belong in `.agents/{folder}/`. If detail creeps into either overview, move it down
+  rather than leaving it. `AGENTS.md` carries the auto-activation contract and the
+  trigger table, never a rule body.
 
 ## When this file goes stale
 
-The moment real source, a manifest, or a CI workflow lands in this repository,
-this file's "Current state" section is wrong. Correcting it is part of the change
-that introduces them — subject to the Discovery Protocol below, propose the
-rewrite rather than silently reshaping the rules.
+This file's "Current state" and "What the project is" sections describe the
+repository at a moment in time. The moment a CI workflow lands, a mod loader module
+gains real code, or the split with `core` is deliberately changed, they are wrong.
+Correcting them is part of the change that caused it — subject to the Discovery
+Protocol below, propose the rewrite rather than silently reshaping the rules. The live
+version of that snapshot is
+[`../memory/state/repository-state.md`](../memory/state/repository-state.md), which is
+updated freely; this file changes only by proposal.
 
 ## Discovery Protocol
 
@@ -108,3 +125,8 @@ Collect the findings, and when the task is done present them to the user:
 
 Then let the user select which findings to apply. Create only the selected ones.
 Never batch-apply, never apply silently.
+
+**Scope of this gate:** it covers instruction files under `.agents/{folder}/`.
+Documentation pages under `wiki/` and `.agents/wiki/` may be written when the facts
+are real and verified. Memory under `.agents/memory/` is written freely and
+automatically — see [`memory-policy.md`](memory-policy.md).

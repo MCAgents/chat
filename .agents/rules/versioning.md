@@ -58,3 +58,8 @@ Collect the findings, and when the task is done present them to the user:
 
 Then let the user select which findings to apply. Create only the selected ones.
 Never batch-apply, never apply silently.
+
+**Scope of this gate:** it covers instruction files under `.agents/{folder}/`.
+Documentation pages under `wiki/` and `.agents/wiki/` may be written when the facts
+are real and verified. Memory under `.agents/memory/` is written freely and
+automatically — see [`memory-policy.md`](memory-policy.md).

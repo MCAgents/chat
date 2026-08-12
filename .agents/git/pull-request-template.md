@@ -15,6 +15,8 @@ not for a parser.
   see [`commit-conventions.md`](commit-conventions.md).
 * Write a plain, capitalized phrase, verb-first where it reads naturally.
 * No trailing period, no issue IDs, no emoji, no branch names.
+* **No session link**, in the title or anywhere in the body — see
+  [`../rules/no-session-links.md`](../rules/no-session-links.md).
 * Say what the change **is**, specifically. "Update files" is not a title.
 * Lead with `Breaking Change` when the pull request breaks an existing contract.
 
@@ -96,3 +98,8 @@ Collect the findings, and when the task is done present them to the user:
 
 Then let the user select which findings to apply. Create only the selected ones.
 Never batch-apply, never apply silently.
+
+**Scope of this gate:** it covers instruction files under `.agents/{folder}/`.
+Documentation pages under `wiki/` and `.agents/wiki/` may be written when the facts
+are real and verified. Memory under `.agents/memory/` is written freely and
+automatically — see [`../rules/memory-policy.md`](../rules/memory-policy.md).

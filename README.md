@@ -14,7 +14,7 @@ credential storage, commands, permissions, and conversation state.
 
 ## What is here today
 
-- A Gradle multi project build on **Java 25**: `api`, `common`, and eight
+- A Gradle multi project build on **Java 25**: `api`, `common`, and ten
   `platforms/*` modules, all under `io.github.mcagents.chat`. See
   [`wiki/information/modules.md`](wiki/information/modules.md).
 - `/chat`, `/chat clear`, and `/chat reload` on SpigotMC, PaperMC, and Folia,
@@ -30,9 +30,10 @@ credential storage, commands, permissions, and conversation state.
 - An agent instruction set under `.agents/` — placement rules, git conventions,
   task workflow, token handling, licensing, platform knowledge, and the creator
   agents that maintain the trees.
-- A documentation tree under `wiki/`.
-- An `INDEX.md` router tree so a file can be found by reading a few small tables
-  instead of scanning the repository.
+- A documentation tree under `wiki/` for people, and an agent-facing knowledge and
+  memory tree under `.agents/wiki/` and `.agents/memory/`.
+- A centralized index tree in `.agents/index/` so a file can be found by reading a few
+  small tables instead of scanning the repository.
 
 ## Quick start
 
@@ -49,8 +50,6 @@ bridge at runtime, not compiled against. Full details:
 
 ## Documentation
 
-Start at [`wiki/INDEX.md`](wiki/INDEX.md).
-
 - [`wiki/information/overview.md`](wiki/information/overview.md) — what this
   repository is and how it is organized.
 - [`wiki/information/modules.md`](wiki/information/modules.md) — the module
@@ -63,7 +62,14 @@ Start at [`wiki/INDEX.md`](wiki/INDEX.md).
   keeps credentials.
 - [`wiki/environments/setup.md`](wiki/environments/setup.md) — getting a working
   copy and starting a change.
-- [`AGENTS.md`](AGENTS.md) — entry point for agents working in this repository.
+
+The full map of the wiki is
+[`.agents/index/project-wiki-index.md`](.agents/index/project-wiki-index.md).
+
+## Working with agents
+
+Start at [`AGENTS.md`](AGENTS.md) — the entry point, the auto-activation contract, and
+the trigger table for the instruction set in `.agents/`.
 
 ## License
 
