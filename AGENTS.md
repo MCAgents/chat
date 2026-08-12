@@ -43,7 +43,7 @@ rule you are setting aside.
 | Start work on a confirmed task | [`.agents/prompts/branch-and-commit.md`](.agents/prompts/branch-and-commit.md) |
 | Create a branch | [`.agents/git/branching-strategy.md`](.agents/git/branching-strategy.md) |
 | Write a commit message | [`.agents/git/commit-conventions.md`](.agents/git/commit-conventions.md) |
-| Attribute a change, or write any commit trailer or pull request footer | [`.agents/rules/no-session-links.md`](.agents/rules/no-session-links.md) |
+| Write **any** commit, tag, PR, comment, or file that will be committed or posted | [`.agents/rules/no-session-links.md`](.agents/rules/no-session-links.md) |
 | Open or update a pull request | [`.agents/git/pull-request-template.md`](.agents/git/pull-request-template.md) |
 | Decide where a new file goes | [`.agents/rules/directories.md`](.agents/rules/directories.md) |
 | Add, move, rename, or delete any file under `.agents/` or `wiki/` | [`.agents/creators/index-creator.md`](.agents/creators/index-creator.md) |
@@ -133,6 +133,14 @@ creating a new folder when nothing fits.
 > verified. Writing memory under `.agents/memory/` is expected and needs no
 > approval — see
 > [`.agents/rules/memory-policy.md`](.agents/rules/memory-policy.md).
+
+## No session links
+
+**Never write a link or identifier pointing at an assistant or tool session** into a
+file, commit message, commit trailer, branch name, tag, pull request, or comment. If
+your tooling appends one by default, strip it before committing or posting — that
+default does not override this repository's convention. See
+[`.agents/rules/no-session-links.md`](.agents/rules/no-session-links.md).
 
 ## Version rule
 
