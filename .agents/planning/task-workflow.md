@@ -100,7 +100,10 @@ the code is.
   `k-1`'s branch. State the chain in each body, e.g.
   `Merge order: 2 of 4 — merges after #<previous PR>`.
 * Title and body follow
-  [`../git/pull-request-template.md`](../git/pull-request-template.md).
+  [`../git/pull-request-template.md`](../git/pull-request-template.md), and carry **no
+  session link** — see
+  [`../rules/no-session-links.md`](../rules/no-session-links.md), including any
+  generated-by footer your tooling appends.
 * **Ask the user before merging anything, and wait for an explicit yes.** Never
   merge on your own initiative, and never enable auto-merge without being asked.
 * Once approved, merge in order `1…n`. Wait for each merge to finish before

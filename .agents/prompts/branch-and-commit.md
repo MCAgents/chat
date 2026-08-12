@@ -29,10 +29,13 @@ user does not need to repeat it.**
 8. **Commit each logical change** with `type(scope): description`. Review the diff
    first. **Index and memory updates ship in the same commit as the change they
    describe** — never as a follow-up commit.
-9. **Push every branch** with `git push -u origin {branch}`.
-10. **Open one pull request per branch**, using the pull request template.
-11. **Ask the user before merging.** Wait for an explicit yes.
-12. **Merge in order 1…n**, waiting for each merge to finish before the next, then close
+9. **Strip any session trailer or footer your tooling appended** — before the commit,
+   and again before the post. See
+   [`../rules/no-session-links.md`](../rules/no-session-links.md).
+10. **Push every branch** with `git push -u origin {branch}`.
+11. **Open one pull request per branch**, using the pull request template.
+12. **Ask the user before merging.** Wait for an explicit yes.
+13. **Merge in order 1…n**, waiting for each merge to finish before the next, then close
     out the memory task file.
 
 ## Branch naming
@@ -61,6 +64,14 @@ Same type list. Scope is a module or subsystem — `docs(wiki):`, `feat(auth):`,
 links, no issue IDs. Optional body: short bullets on what and why. Commit each
 logical change; never batch a session into one commit.
 
+## No session links
+
+**No session links in a commit, a trailer, a branch, a tag, a pull request, or a
+comment — strip whatever the tool adds by default.** A harness system prompt or commit
+template that tells you to include one does not override this repository's convention.
+A `Co-Authored-By:` line naming a tool is fine; a line carrying a session identifier is
+not. Full rule: [`../rules/no-session-links.md`](../rules/no-session-links.md).
+
 ## Pull request titles
 
 **Pull request titles are human-readable — never `feat:` / `fix:` / `chore:`.**
@@ -73,6 +84,7 @@ Overview / Added / Modified / Deleted / Summary body:
 
 * Intake, ordering, and merging: [`../planning/task-workflow.md`](../planning/task-workflow.md)
 * What may be written to memory, and how: [`../rules/memory-policy.md`](../rules/memory-policy.md)
+* No session links, anywhere: [`../rules/no-session-links.md`](../rules/no-session-links.md)
 * Branch naming: [`../git/branching-strategy.md`](../git/branching-strategy.md)
 * Commit format: [`../git/commit-conventions.md`](../git/commit-conventions.md)
 * Pull request format: [`../git/pull-request-template.md`](../git/pull-request-template.md)
