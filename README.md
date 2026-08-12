@@ -27,9 +27,10 @@ credential storage, commands, permissions, and conversation state.
 - One request in flight per player — a second is refused, not queued.
 - A configurable model, defaulting to `~deepseek/deepseek-v4-flash-latest` on
   OpenRouter.
-- An agent instruction set under `.agents/` — placement rules, git conventions,
-  task workflow, token handling, licensing, platform knowledge, and the creator
-  agents that maintain the trees.
+- An agent instruction set that resolves the organization's shared conventions over
+  the `lxagents-agents-base` MCP connector, so they are not copied into this
+  repository. `.agents/` carries only what is this project's own — token handling,
+  licensing, platform knowledge, and the repository rules.
 - A documentation tree under `wiki/` for people, and an agent-facing knowledge and
   memory tree under `.agents/wiki/` and `.agents/memory/`.
 - A centralized index tree in `.agents/index/` so a file can be found by reading a few
@@ -69,7 +70,12 @@ The full map of the wiki is
 ## Working with agents
 
 Start at [`AGENTS.md`](AGENTS.md) — the entry point, the auto-activation contract, and
-the trigger table for the instruction set in `.agents/`.
+the trigger table.
+
+The universal conventions — branching, commits, pull requests, task workflow, the
+directory architecture, the creators — are served by the **`lxagents-agents-base`** MCP
+connector and read over `agents://`, not stored here. `AGENTS.md` carries the bootstrap
+block that resolves it, and `.agents/index/root-index.md` routes into both sets.
 
 ## License
 

@@ -125,4 +125,4 @@ Record each one here in the same change that introduces it.
 
 This file is an instruction, so it is **not yours to edit on your own initiative** — even
 when you are confident it is wrong. Collect the finding and propose it, per
-[`../rules/discovery-protocol.md`](../rules/discovery-protocol.md).
+`{shared}/rules/discovery-protocol.md`.

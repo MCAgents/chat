@@ -16,7 +16,7 @@ it.
 matches the request, so you continue prior work instead of restarting it. That
 standing exception to the one-branch routing rule is why the `Scope` column exists —
 match on it before opening anything. Writing here needs no approval; see
-`.agents/rules/memory-policy.md` and `.agents/creators/memory-creator.md`.
+`{shared}/rules/memory-policy.md` and `{shared}/creators/memory-creator.md`.
 
 ## State
 
@@ -31,3 +31,4 @@ match on it before opening anything. Writing here needs no approval; see
 | [`../memory/tasks/agents-setup.md`](../memory/tasks/agents-setup.md) | `.agents/`, `wiki/` | The agent instruction, knowledge, and memory system: what was built, and the decisions behind it. |
 | [`../memory/tasks/no-session-links.md`](../memory/tasks/no-session-links.md) | `.agents/` instruction set | Making the no-session-links rule universal: what was threaded where, and the judgement calls behind it. |
 | [`../memory/tasks/discovery-protocol-extraction.md`](../memory/tasks/discovery-protocol-extraction.md) | `.agents/` instruction set | Extracting the discovery protocol into its own rule, and which six inline copies were kept on purpose. |
+| [`../memory/tasks/agents-rewrite.md`](../memory/tasks/agents-rewrite.md) | `.agents/`, `AGENTS.md` | Re-pointing the instruction set at the `lxagents-agents-base` connector: what was deleted as duplicated, what survived, and why. |

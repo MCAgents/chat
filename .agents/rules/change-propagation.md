@@ -28,9 +28,9 @@ actually invalidated it — an untouched page is not a chore.
 | A public type, method, or its behavior | The `wiki/reference/` page covering it |
 | How a consumer is meant to use something | The `wiki/guides/` page covering it |
 | What the project is or does | [`../../wiki/information/overview.md`](../../wiki/information/overview.md), and `README.md` if the summary there is now wrong |
-| Any file added, removed, moved, or renamed in an indexed scope | The index in `.agents/index/` owning that scope — see [`../creators/index-creator.md`](../creators/index-creator.md) |
-| A new folder under `wiki/` or `.agents/` | The folder tables in [`directories.md`](directories.md), plus the owning index |
-| What is live, broken, or in flight in an area | [`../memory/state/repository-state.md`](../memory/state/repository-state.md), and the `tasks/` file for the work — see [`memory-policy.md`](memory-policy.md) |
+| Any file added, removed, moved, or renamed in an indexed scope | The index in `.agents/index/` owning that scope — see `{shared}/creators/index-creator.md` |
+| A new folder under `wiki/` or `.agents/` | The folder tables in `{shared}/rules/directories.md`, plus the owning index |
+| What is live, broken, or in flight in an area | [`../memory/state/repository-state.md`](../memory/state/repository-state.md), and the `tasks/` file for the work — see `{shared}/rules/memory-policy.md` |
 | Orientation an agent relies on — layout, commands, entry points, gotchas | [`../wiki/context/repository-map.md`](../wiki/context/repository-map.md) |
 | Something an instruction in `.agents/` asserts | That instruction — **by proposal, see below** |
 
@@ -42,13 +42,13 @@ right, and a diff that changes behavior without changing its documentation reads
 as though nothing was documented in the first place.
 
 The one thing that may lag is a `wiki/logs/` entry, which is a version claim and
-belongs to [`versioning.md`](versioning.md).
+belongs to `{shared}/rules/versioning.md`.
 
 ## The `.agents/` exception
 
 `wiki/` pages, `.agents/wiki/` pages, `README.md`, every index in `.agents/index/`, and
 everything under `.agents/memory/` are yours to update directly. Memory in particular
-needs no approval — see [`memory-policy.md`](memory-policy.md).
+needs no approval — see `{shared}/rules/memory-policy.md`.
 
 **`.agents/` instructions are not.** When a change makes an instruction wrong, do
 not rewrite it — that is exactly what the Discovery Protocol exists to prevent, and
@@ -79,7 +79,7 @@ hoping it is noticed.
 
 Nothing enforces this rule mechanically. It holds because the auto-activation contract in
 [`../../AGENTS.md`](../../AGENTS.md) puts it in front of an agent before the work starts —
-see [`auto-activation.md`](auto-activation.md) — and because pull request review catches
+see `{shared}/rules/auto-activation.md` — and because pull request review catches
 what slips past. If this rule ever
 needs teeth — a CI check that fails a commit touching `api/` without touching
 `wiki/`, or a hook that refuses one adding a file without touching its index — that
@@ -89,4 +89,4 @@ is a real change to propose, not something this file can assert into being.
 
 This file is an instruction, so it is **not yours to edit on your own initiative** — even
 when you are confident it is wrong. Collect the finding and propose it, per
-[`discovery-protocol.md`](discovery-protocol.md).
+`{shared}/rules/discovery-protocol.md`.
