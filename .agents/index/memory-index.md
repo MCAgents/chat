@@ -16,7 +16,7 @@ it.
 matches the request, so you continue prior work instead of restarting it. That
 standing exception to the one-branch routing rule is why the `Scope` column exists —
 match on it before opening anything. Writing here needs no approval; see
-`.agents/rules/memory-policy.md` and `.agents/creators/memory-creator.md`.
+`{shared}/rules/memory-policy.md` and `{shared}/creators/memory-creator.md`.
 
 ## State
 

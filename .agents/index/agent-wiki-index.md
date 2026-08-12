@@ -14,7 +14,7 @@ removed from that tree is reflected here **in the same commit**.
 Pages here are written **for agents**: procedures, constraints, and framing that
 exist so an agent behaves correctly. Facts about the project live once, in `wiki/`,
 and these pages link to them — see the audience test in
-`.agents/rules/directories.md`. Documentation a human contributor reads belongs to
+`{shared}/rules/directories.md`. Documentation a human contributor reads belongs to
 [`project-wiki-index.md`](project-wiki-index.md) instead.
 
 ## Context

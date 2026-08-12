@@ -14,7 +14,7 @@ default, and may hold `MIGRATION.md`, `BREAKING.md`, `UPGRADE.md`, or `NOTES.md`
 beside it.
 
 **Creating a new version directory is a version claim** and requires user approval —
-see `.agents/rules/versioning.md`.
+see `{shared}/rules/versioning.md`.
 
 ## Versions
 
