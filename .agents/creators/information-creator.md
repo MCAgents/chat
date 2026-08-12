@@ -185,3 +185,7 @@ Never batch-apply, never apply silently.
 Documentation pages under `wiki/` and `.agents/wiki/` may be written when the facts
 are real and verified. Memory under `.agents/memory/` is written freely and
 automatically — see [`../rules/memory-policy.md`](../rules/memory-policy.md).
+
+Authority: [`../rules/discovery-protocol.md`](../rules/discovery-protocol.md). This
+block is reproduced here on purpose — a creator is often the only file open when an
+instruction is about to be written.
