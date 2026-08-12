@@ -29,3 +29,4 @@ match on it before opening anything. Writing here needs no approval; see
 | File | Scope | Purpose |
 |---|---|---|
 | [`../memory/tasks/agents-setup.md`](../memory/tasks/agents-setup.md) | `.agents/`, `wiki/` | The agent instruction, knowledge, and memory system: what was built, and the decisions behind it. |
+| [`../memory/tasks/no-session-links.md`](../memory/tasks/no-session-links.md) | `.agents/` instruction set | Making the no-session-links rule universal: what was threaded where, and the judgement calls behind it. |

@@ -28,8 +28,11 @@ could confuse.
 
 * Imperative mood — "add", not "added" or "adds".
 * Plain text. No links, no issue-tracker IDs, no emoji.
-* **No session link, in the subject, the body, or a trailer** — see
-  [`../rules/no-session-links.md`](../rules/no-session-links.md).
+* **No session links and no session trailers**, in the subject, the body, or a
+  trailer — see [`../rules/no-session-links.md`](../rules/no-session-links.md). If
+  your tooling appends one by default, strip it before committing. A
+  `Co-Authored-By:` line naming a tool is fine; a line carrying a session identifier
+  is not.
 * No trailing period.
 * Say what the change does, specifically.
 

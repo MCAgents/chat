@@ -14,9 +14,8 @@ not for a parser.
   no `docs:`, no `refactor:`. That convention belongs to commit messages alone —
   see [`commit-conventions.md`](commit-conventions.md).
 * Write a plain, capitalized phrase, verb-first where it reads naturally.
-* No trailing period, no issue IDs, no emoji, no branch names.
-* **No session link**, in the title or anywhere in the body — see
-  [`../rules/no-session-links.md`](../rules/no-session-links.md).
+* No trailing period, no issue IDs, no emoji, no branch names, no session or run
+  URLs.
 * Say what the change **is**, specifically. "Update files" is not a title.
 * Lead with `Breaking Change` when the pull request breaks an existing contract.
 
@@ -69,6 +68,10 @@ Use exactly these sections, in this order:
 * **Summary** — the reviewer's takeaway: blast radius, risk, what to test, and
   what follows this pull request.
 * **Never leave a `{contents}` placeholder**, and never ship an empty section.
+* **No session links anywhere in the title, the body, or a review comment** — and no
+  generated-by footer carrying one. Strip whatever your tooling appends before
+  posting. Provenance names the tool, never the conversation. See
+  [`../rules/no-session-links.md`](../rules/no-session-links.md).
 * When the pull request is part of an ordered chain, add the merge-order line
   required by [`../planning/task-workflow.md`](../planning/task-workflow.md), e.g.
   `Merge order: 2 of 4 — merges after #<previous PR>`.

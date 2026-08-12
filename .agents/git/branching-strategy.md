@@ -38,6 +38,9 @@ Examples:
 * **No tool-preset prefixes.** `claude/`, `codex/`, `cursor/`, and anything like
   them are not branch types. A tool's default branch name is not this project's
   convention.
+* **No session, run, or conversation identifiers in a branch name** — a generated
+  session suffix is not a primary noun. See
+  [`../rules/no-session-links.md`](../rules/no-session-links.md).
 * If a branch already violates the convention, recreate it correctly and delete
   the wrong one — or present both options to the user and let them choose. Do not
   silently keep working on a misnamed branch.

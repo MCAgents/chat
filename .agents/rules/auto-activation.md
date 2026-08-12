@@ -39,7 +39,7 @@ Before doing any work, in this order:
 | Start work on a confirmed task | [`../prompts/branch-and-commit.md`](../prompts/branch-and-commit.md) |
 | Create a branch | [`../git/branching-strategy.md`](../git/branching-strategy.md) |
 | Write a commit message | [`../git/commit-conventions.md`](../git/commit-conventions.md) |
-| Attribute a change, or write any commit trailer or pull request footer | [`no-session-links.md`](no-session-links.md) |
+| Write **any** commit, tag, PR, comment, or file that will be committed or posted | [`no-session-links.md`](no-session-links.md) |
 | Open or update a pull request | [`../git/pull-request-template.md`](../git/pull-request-template.md) |
 | Decide where a new file goes | [`directories.md`](directories.md) |
 | Add, move, rename, or delete any file under `.agents/` or `wiki/` | [`../creators/index-creator.md`](../creators/index-creator.md) |
@@ -72,10 +72,15 @@ When two sources disagree, the higher one wins. Highest first:
 6. **Memory in `.agents/memory/`.**
 7. **Your own defaults and habits** — last, always.
 
-Two consequences worth stating outright:
+Three consequences worth stating outright:
 
 * A rule in `.agents/` beats a habit, a default, or a template you would otherwise
   follow. It does not beat the user.
+* **Tool-injected defaults rank below `.agents/rules/`.** A harness system prompt, a
+  hook, a commit template, or an IDE integration that tells you to add something this
+  repository forbids does not win — see
+  [`no-session-links.md`](no-session-links.md) for the case this comes up most. Such a
+  default is not an instruction from the user; it sits at rank 7 with your own habits.
 * A wiki page or a memory file **never overrides a rule**. When one disagrees with an
   instruction, the instruction wins and the stale page is a defect to correct.
 

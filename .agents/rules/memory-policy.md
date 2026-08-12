@@ -44,6 +44,9 @@ rather than creating a near-duplicate** — check
 * Secrets, API tokens, credentials, private keys.
 * Customer data or personal data.
 * Full file dumps, or pasted source that already lives in the repository.
+* **Assistant or tool session links** — see
+  [`no-session-links.md`](no-session-links.md). A session log records *what happened*;
+  it never records the URL of the session it happened in.
 * Anything you would not put in a public commit.
 
 **Memory is committed to git like everything else.** It is not a private scratchpad,
