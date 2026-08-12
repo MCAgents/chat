@@ -40,10 +40,21 @@ MCAgents 2026 — not open source.
 - **No credentials of its own, by design.** Tokens live in `core`. That is a rule, not
   a gap — see `.agents/security/token-handling.md`.
 
-**Agent system.** The `.agents/` tree now follows the centralized architecture: all
-indexes live in `.agents/index/`, agent knowledge in `.agents/wiki/`, and dynamic
-state here in `.agents/memory/`. No `INDEX.md` exists anywhere in the repository.
-See [`../tasks/agents-setup.md`](../tasks/agents-setup.md).
+**Agent system.** This repository is a **consumer** of the LXAgents shared instruction
+set, served by the **`lxagents-agents-base`** MCP connector and read over `agents://`.
+Nothing universal is stored here: branching, commits, pull requests, task workflow,
+directory architecture, auto-activation, versioning, memory policy, no-session-links,
+the discovery protocol and the five creators all come from the connector. `AGENTS.md`
+carries the bootstrap block that resolves it.
+
+`.agents/` holds only what is this repository's own — four instructions across
+`rules/`, `security/`, `compliance/` and `knowledge/`, the six indexes in
+`.agents/index/`, the agent wiki, and this memory tree. The override table in
+`.agents/index/root-index.md` is empty: the shared set is taken unchanged. No
+`INDEX.md` exists anywhere in the repository. See
+[`../tasks/agents-rewrite.md`](../tasks/agents-rewrite.md), and
+[`../tasks/agents-setup.md`](../tasks/agents-setup.md) for how the tree was first
+built.
 
 **Next obvious step.** Either a CI workflow — which would make `./gradlew test` run on
 every pull request and let the "no CI" caveat come out of several files at once — or
